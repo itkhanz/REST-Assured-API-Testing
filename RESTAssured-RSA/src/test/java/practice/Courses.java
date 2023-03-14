@@ -7,6 +7,8 @@ import practice.files.Payload;
 import practice.utils.ParseUtils;
 
 /****************************************
+ * Section 06: Diving in Depth-Automating REST APIs
+ * Mock response of API is stored in the Payload.coursePrice(). It is helpful to test APIs before the API contract if fully developed.
  * 1. Print no of courses returned by API
  * 2. Print purchase amount
  * 3. Print title of the first course

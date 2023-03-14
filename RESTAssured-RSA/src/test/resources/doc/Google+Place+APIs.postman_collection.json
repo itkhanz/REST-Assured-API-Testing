@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "542e062e-091a-40a0-98c5-4ea8548411f9",
+		"name": "Google Place APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Place API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"location\": {\n    \"lat\": -38.383494,\n    \"lng\": 33.427362\n  },\n  \"accuracy\": 50,\n  \"name\": \"Frontline house\",\n  \"phone_number\": \"(+91) 983 893 3937\",\n  \"address\": \"29, side layout, cohen 09\",\n  \"types\": [\n    \"shoe park\",\n    \"shop\"\n  ],\n  \"website\": \"http://google.com\",\n  \"language\": \"French-IN\"\n}"
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/maps/api/place/add/json?key=qaclick123",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"maps",
+						"api",
+						"place",
+						"add",
+						"json"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "qaclick123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Place API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://rahulshettyacademy.com/maps/api/place/get/json?place_id=cbeef2741cce7486303e61bbc3df2945&key=qaclick123",
+					"protocol": "http",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"maps",
+						"api",
+						"place",
+						"get",
+						"json"
+					],
+					"query": [
+						{
+							"key": "place_id",
+							"value": "cbeef2741cce7486303e61bbc3df2945"
+						},
+						{
+							"key": "key",
+							"value": "qaclick123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Place API",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"place_id\":\"cbeef2741cce7486303e61bbc3df2945\",\n\"address\":\"70 winter walk, USA\",\n\"key\":\"qaclick123\"\n}"
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/maps/api/place/update/json?place_id=cbeef2741cce7486303e61bbc3df2945&key=qaclick123",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"maps",
+						"api",
+						"place",
+						"update",
+						"json"
+					],
+					"query": [
+						{
+							"key": "place_id",
+							"value": "cbeef2741cce7486303e61bbc3df2945"
+						},
+						{
+							"key": "key",
+							"value": "qaclick123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Place API",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n    \"place_id\":\"cbeef2741cce7486303e61bbc3df2945\"\n}\n"
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/maps/api/place/delete/json?key=qaclick123",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"maps",
+						"api",
+						"place",
+						"delete",
+						"json"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "qaclick123"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
