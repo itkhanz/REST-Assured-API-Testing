@@ -67,7 +67,7 @@ public class Jira {
     }
 
     @Test
-    public void test_CreateIssue() {
+    public void test_Jira() {
         //Create an Issue
         String responseIssueCreated = createIssue("test issue for jira api");
         JsonPath parsedResponseIssueCreated = ParseUtils.rawToJson(responseIssueCreated);

@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "ed258a8e-34a5-4328-8f0c-41ba5e61fb84",
+		"name": "oauth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "oauthdemo",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.GlxgB56UzSPvk69weWofcw6Rk822oKmjVO9Oo0jzW0NprzPlwQ79Hw-2zM9k8r-SztgijCo19viyluASLly_LWgVfvrVk77iwlme6Qh3HAuJQGLh4esgjgTkhu80wg",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "queryParams",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rahulshettyacademy.com/getCourse.php?accessToken=\nya29.GlxgB1q69cYognIFf2o7yA-tlcIkLYQ5nzl0Utivk78RN2pd8IpRVVPMLb3PLsUWZKPTy_f0st7-aPPPYJc-mDNCsAmJDZLcSVn7fDjTajoMIxY1s_XVJa6IQ1u1lg",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"getCourse.php"
+					],
+					"query": [
+						{
+							"key": "accessToken",
+							"value": "\nya29.GlxgB1q69cYognIFf2o7yA-tlcIkLYQ5nzl0Utivk78RN2pd8IpRVVPMLb3PLsUWZKPTy_f0st7-aPPPYJc-mDNCsAmJDZLcSVn7fDjTajoMIxY1s_XVJa6IQ1u1lg"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "c2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	]
+}
