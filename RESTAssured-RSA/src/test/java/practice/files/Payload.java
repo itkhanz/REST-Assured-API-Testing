@@ -66,4 +66,33 @@ public class Payload {
                 "\"author\":\"John foer\"\n" +
                 "}";
     }
+
+    public static String createSessionJIRA(String username, String password) {
+        return "{ \"username\": \"" + username + "\", \"password\": \"" + password +"\" }";
+    }
+
+    public static String createIssueJIRA(String projectKey, String issueSummary) {
+        return "{\n" +
+                "    \"fields\": {\n" +
+                "        \"project\": {\n" +
+                "            \"key\": \"" + projectKey + "\"\n" +
+                "        },\n" +
+                "        \"summary\": \"" + issueSummary + "\",\n" +
+                "        \"issuetype\": {\n" +
+                "            \"name\": \"Bug\"\n" +
+                "        },\n" +
+                "        \"description\": \"Creating an issue using project keys and issue type names using the REST API\"\n" +
+                "    }\n" +
+                "}";
+    }
+
+    public static String addCommentJIRA(String comment) {
+        return "{\n" +
+                "    \"body\": \"" + comment + "\",\n" +
+                "    \"visibility\": {\n" +
+                "        \"type\": \"role\",\n" +
+                "        \"value\": \"Administrators\"\n" +
+                "    }\n" +
+                "}";
+    }
 }

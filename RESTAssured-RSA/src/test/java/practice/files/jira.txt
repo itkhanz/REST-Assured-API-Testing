@@ -1,0 +1,1 @@
+This is an example attachment for demonstration of adding attachment to JIRA Issue
