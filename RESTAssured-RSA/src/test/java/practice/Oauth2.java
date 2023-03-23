@@ -1,8 +1,16 @@
 package practice;
 
+import io.restassured.parsing.Parser;
 import io.restassured.path.json.JsonPath;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+import practice.pojo.Api;
+import practice.pojo.GetCourse;
+import practice.pojo.WebAutomation;
 import practice.utils.ParseUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -16,6 +24,10 @@ import static io.restassured.RestAssured.given;
  * Plan for generating Access token using APIs in Postman for complex flow of authorization code OAuth 2.0
  * API testing with generated access token
  * Automate complete OAuth2.0 flow using Rest Assured
+ * ****************************************************************************************************************
+ * Deserialization of complex JSON response using POJO classes is also covered in this test class
+ * TC_01: Get the price of SoapUI Webservices testing course (Dynamically scan all the course titles and extract the course price for matching course title)
+ * TC_02: Get all the course titles of webAutomation
  *
  */
 public class Oauth2 {
@@ -40,7 +52,7 @@ public class Oauth2 {
         String email = "";     //your GMAIL email ID
         String password = "";       //your password for GMAIL email ID
 
-        //Step 1: Get the authorization code
+        //Step 1: Get the authorization code (perform this step manually in browser)
         //User signs in to google by hitting google authorization server and get code
         //https://accounts.google.com/o/oauth2/v2/auth
         String code = getAuthorizationCode(email, password);
@@ -57,8 +69,28 @@ public class Oauth2 {
         //Step 3: Hit the actual request with access token
         //Application grants access to User by validating access token
         //https://rahulshettyacademy.com/getCourse.php
-        String coursesResponse = getCourses(accessToken);
-        System.out.println(coursesResponse);
+        GetCourse gc = getCourses(accessToken);
+        System.out.println("Linkedin: " + gc.getLinkedIn());
+        System.out.println("Instructor: " + gc.getInstructor());
+
+        //Step 4: Get the price of SoapUI Webservices testing course
+        List<Api> apiCourses = gc.getCourses().getApi();
+        String coursePrice = apiCourses
+                                .stream()
+                                .filter(apiCourse -> apiCourse.getCourseTitle().equalsIgnoreCase("SoapUI Webservices testing"))
+                                .findAny()
+                                .map(Api::getPrice)
+                                .orElse(null);
+        Assert.assertEquals(coursePrice, "40");
+
+        //Step 5: Get all the course titles of webAutomation
+        List<String> expectedCourseTitles = Arrays.asList("Selenium Webdriver Java", "Cypress", "Protractor");
+        List<WebAutomation> webAutomationCourses = gc.getCourses().getWebAutomation();
+        List<String> actualCourseTitles = webAutomationCourses.stream().map(WebAutomation::getCourseTitle).toList();
+        webAutomationCourses.forEach(course -> System.out.println(course.getCourseTitle()));
+        Assert.assertEquals(actualCourseTitles, expectedCourseTitles);
+
+
     }
 
     private String getAuthorizationCode(String email, String password) throws InterruptedException {
@@ -83,7 +115,7 @@ public class Oauth2 {
                         .split("&scope")[0];*/
 
         //Get this code manually by hitting the above URL and extract the code
-        String code = "4%2F0AWtgzh7UJNu9GznAnvsZ--5ZBtoX2fnfBZ6EScxEwZNxgqCxvja_PsI1Xf5e4UMuYDFHBg";
+        String code = "4%2F0AVHEtk4gZYfLY2atUybPFMtriCv74LCVgJE9Ag9q4-A2bR5Ea64MVkCJ3OLExyupA4VYAQ";
         return code;
     }
 
@@ -109,12 +141,28 @@ public class Oauth2 {
         return response;
     }
 
-    public static String getCourses(String accessToken) {
+    /*public static String getCourses(String accessToken) {
         String response = given()
                             .queryParam("access_token", accessToken)
                         .when()
                             .get("https://rahulshettyacademy.com/getCourse.php")
                         .asString();
+        return response;
+    }*/
+
+    public static GetCourse getCourses(String accessToken) {
+        //Deserialization of the response is achieved using POJO classes
+        //RestAssured will convert the JSON response with the help of POJO classes and insert the values into objects.
+        //src/test/java/practice/files/oauth.json contains the mock response of API
+        //If the response header has Content-Type: application/json, then no need to add expect() Parser.JSON
+        GetCourse response = given()
+                                .queryParam("access_token", accessToken)
+                            .expect()
+                                .defaultParser(Parser.JSON)
+                            .when()
+                                .get("https://rahulshettyacademy.com/getCourse.php")
+                            .as(GetCourse.class)
+                            ;
         return response;
     }
 }
