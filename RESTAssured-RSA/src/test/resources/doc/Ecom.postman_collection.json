@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "f9e7afae-1322-4407-8ad0-871222014c25",
+		"name": "Ecom",
+		"description": "URL: [https://rahulshettyacademy.com/client/](https://rahulshettyacademy.com/client/)\n\nCourse: Rest API Testing (Automation) from Scratch-Rest Assured Java\n\nSection: End to End ecommerce API example with Automation Concepts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11427920"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userEmail\": \"testuser@rsacademy.com\",\r\n    \"userPassword\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/api/ecom/auth/login",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"api",
+						"ecom",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Product",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzVkMDNmNWM0ZDBjNTFmNGY0OTcwZmMiLCJ1c2VyRW1haWwiOiJ0ZXN0dXNlckByc2FjYWRlbXkuY29tIiwidXNlck1vYmlsZSI6MTIzNDU2Nzg5MCwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTY3OTYzNzA2MiwiZXhwIjoxNzExMTk0NjYyfQ.fuAc7ODo2qYAc8bs7RFXIIy50k8d8wkM9soRU1252DM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "productName",
+							"value": "qwerty",
+							"type": "text"
+						},
+						{
+							"key": "productAddedBy",
+							"value": "635d03f5c4d0c51f4f4970fc",
+							"type": "text"
+						},
+						{
+							"key": "productCategory",
+							"value": "fashion",
+							"type": "text"
+						},
+						{
+							"key": "productSubCategory",
+							"value": "shirts",
+							"type": "text"
+						},
+						{
+							"key": "productPrice",
+							"value": "11500",
+							"type": "text"
+						},
+						{
+							"key": "productDescription",
+							"value": "Addias Originals",
+							"type": "text"
+						},
+						{
+							"key": "productFor",
+							"value": "women",
+							"type": "text"
+						},
+						{
+							"key": "productImage",
+							"type": "file",
+							"src": "shirt.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/api/ecom/product/add-product",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"api",
+						"ecom",
+						"product",
+						"add-product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzVkMDNmNWM0ZDBjNTFmNGY0OTcwZmMiLCJ1c2VyRW1haWwiOiJ0ZXN0dXNlckByc2FjYWRlbXkuY29tIiwidXNlck1vYmlsZSI6MTIzNDU2Nzg5MCwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTY3OTYzNTg0MCwiZXhwIjoxNzExMTkzNDQwfQ.It1AfBomkgp0l7omInLou-vV1GS3auEeHE60cie0n6A",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orders\": [\r\n        {\r\n            \"country\": \"India\",\r\n            \"productOrderedId\": \"641d3cb1568c3e9fb13c58df\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rahulshettyacademy.com/api/ecom/order/create-order",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"api",
+						"ecom",
+						"order",
+						"create-order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Order Details",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzVkMDNmNWM0ZDBjNTFmNGY0OTcwZmMiLCJ1c2VyRW1haWwiOiJ0ZXN0dXNlckByc2FjYWRlbXkuY29tIiwidXNlck1vYmlsZSI6MTIzNDU2Nzg5MCwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTY3OTYzNTg0MCwiZXhwIjoxNzExMTkzNDQwfQ.It1AfBomkgp0l7omInLou-vV1GS3auEeHE60cie0n6A",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=641d3df3568c3e9fb13c5a59",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"api",
+						"ecom",
+						"order",
+						"get-orders-details"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "641d3df3568c3e9fb13c5a59"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzVkMDNmNWM0ZDBjNTFmNGY0OTcwZmMiLCJ1c2VyRW1haWwiOiJ0ZXN0dXNlckByc2FjYWRlbXkuY29tIiwidXNlck1vYmlsZSI6MTIzNDU2Nzg5MCwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTY3OTYzNTg0MCwiZXhwIjoxNzExMTkzNDQwfQ.It1AfBomkgp0l7omInLou-vV1GS3auEeHE60cie0n6A",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://rahulshettyacademy.com/api/ecom/product/delete-product/641d3cb1568c3e9fb13c58df?",
+					"protocol": "https",
+					"host": [
+						"rahulshettyacademy",
+						"com"
+					],
+					"path": [
+						"api",
+						"ecom",
+						"product",
+						"delete-product",
+						"641d3cb1568c3e9fb13c58df"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

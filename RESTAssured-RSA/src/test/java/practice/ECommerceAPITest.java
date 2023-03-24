@@ -26,6 +26,7 @@ public class ECommerceAPITest {
 
     /**
      * URL: https://rahulshettyacademy.com/client/
+     * Refer to Ecom.postman_collection to see the details of API contract
      * Test Steps
      * 1. Login and extract authorization token
      * 2. Create product
@@ -112,9 +113,9 @@ public class ECommerceAPITest {
         //making api call create new product
         String addProductResponse = reqAddProduct
                 .when()
-                .post("/api/ecom/product/add-product")
+                    .post("/api/ecom/product/add-product")
                 .then()
-                .log().all()
+                    .log().all()
                 .extract().response().asString();
 
         //extracting the productId
@@ -147,7 +148,12 @@ public class ECommerceAPITest {
         RequestSpecification createOrderReq = given().log().all().spec(createOrderBaseReq).body(orders);
 
         //Making API call to create order
-        String responseAddOrder = createOrderReq.when().post("/api/ecom/order/create-order").then().log().all().extract().response().asString();
+        String responseAddOrder = createOrderReq
+                .when()
+                    .post("/api/ecom/order/create-order")
+                .then()
+                    .log().all()
+                .extract().response().asString();
         System.out.println(responseAddOrder);
 
         return responseAddOrder;
