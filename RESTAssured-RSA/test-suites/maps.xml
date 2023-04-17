@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Base Test Suite" thread-count="10" parallel="false">
+    <test  name="Maps API Tests">
+        <classes>
+            <class name="framework.runners.BaseRunnerTest"/>
+        </classes>
+    </test> <!-- Test -->
+</suite> <!-- Suite -->
