@@ -109,3 +109,12 @@ println query
 
 ---
 
+** Postman Mock Server
+
+* Mock server is useful when backend APIs are not completely ready therefore developers can develop the frontend with the help of API specifications.
+* Create a new mock collection and add a mock server. Use the Url of the mock server and create an example response for the APIs to automate.
+* Mock server can also be executed from the browser and it will return the same response as in Postman.
+* Use the `x-mock-response-code` header with different status codes to test different status codes for examples.
+
+---
+
