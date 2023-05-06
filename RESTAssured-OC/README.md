@@ -4,6 +4,7 @@
   the [Udemy course](https://www.udemy.com/course/rest-assured-api-automation/) created by Omparkash Chavan.
 * It also includes the extended practice exercises and enhancement to the original framework developed during the
   course.
+* [REST Assured wiki](https://github.com/rest-assured/rest-assured/wiki/Usage)
 
 ---
 
@@ -101,3 +102,10 @@ println query
   * Jayway syntax: `$.phoneNumbers..number`
 
 ---
+
+** HTTP Essentials
+
+<img src="doc/http-methods.png" alt="http methods">
+
+---
+
