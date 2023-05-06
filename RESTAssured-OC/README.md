@@ -5,6 +5,8 @@
 * It also includes the extended practice exercises and enhancement to the original framework developed during the
   course.
 
+---
+
 ## Learning Outcomes
 
 <img src="doc/topics.png" alt="course topics">
@@ -32,4 +34,70 @@
 
 <img src="doc/postmanAPI-getWorkspace.png">
 
+---
 
+## JSON Essentials
+
+* [JSON Path Finder](https://jsonpathfinder.com/)
+* [JSONPath Online Evaluator - jsonpath.com](https://jsonpath.com/)
+* [JSON (using JsonPath)](https://github.com/rest-assured/rest-assured/wiki/Usage#json-using-jsonpath)
+* JsonPath uses Groovy's GPath syntax. [Groovy JSON](https://groovy-lang.org/json.html)
+* GPath is a path expression language integrated into Groovy which allows parts of nested structured data to be identified. 
+* [GPath](https://docs.groovy-lang.org/latest/html/documentation/core-semantics.html#gpath_expressions) use a dot-object notation to perform object navigation.
+* Groovy Playground
+  * http://groovyconsole.appspot.com/
+  * https://www.jdoodle.com/execute-groovy-online/
+  * https://onecompiler.com/groovy
+
+```json
+{
+  "firstName": "Larry",
+  "lastName": "Sheen",
+  "age": 30,
+  "children": [],
+  "spouse": null,
+  "vehicle": true,
+  "address": {
+    "street": "6301 Richardson Drive",
+    "city": "New York City",
+    "state": "New York",
+    "zipCode": "65027"
+  },
+  "phoneNumbers": [
+    {
+      "type": "mobile",
+      "number": "543 666-6794"
+    },
+    {
+      "type": "home",
+      "number": "555 650-2200"
+    }
+  ]
+}
+```
+
+```groovy
+import groovy.json.JsonSlurper
+
+def object = new JsonSlurper().parseText(
+'''
+{INSERT_YOUR_JSON_HERE}
+'''
+)
+
+def query = object
+println query
+```
+
+* Following paths can be constructed to retrieve the data:
+  * **Street Address** `object.address.street`
+  * **First phone number** `object.phoneNumbers[0].number`
+  * **All phone numbers as array** `object.phoneNumbers.number`
+
+* [Jayway JsonPath](https://github.com/json-path/JsonPath)
+* RestAssured uses Groovy JsonPath syntax by default. For using Jayway JsonPath, it has to be added as a dependency.
+* Both implementations are different syntax-wise. For example, to extract all the phone numbers from sample JSON:
+  * Groovy syntax: `phoneNumbers.number`
+  * Jayway syntax: `$.phoneNumbers..number`
+
+---
