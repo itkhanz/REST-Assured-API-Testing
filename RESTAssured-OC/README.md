@@ -275,7 +275,61 @@ public class HelloWorldTest {
 
 ### Logging
 
+* [REST Assured logging documentation](https://github.com/rest-assured/rest-assured/wiki/Usage#logging)
+* The `Logging` class in the practice package demonstrates the different logging methods with example test cases.
+
+**Request Logging**
+```java
+given().log().all(). .. // Log all request specification details including parameters, headers and body
+given().log().params(). .. // Log only the parameters of the request
+given().log().body(). .. // Log only the request body
+given().log().headers(). .. // Log only the request headers
+given().log().cookies(). .. // Log only the request cookies
+given().log().method(). .. // Log only the request method
+given().log().path(). .. // Log only the request path
+```
+
+**Response Logging**
+```java
+get("/x").then().log().statusLine(). .. // Only log the status line
+get("/x").then().log().headers(). .. // Only log the response headers
+get("/x").then().log().cookies(). .. // Only log the response cookies
+```
+
+* If you're only interested in printing the response body if an error occur then you can use: 
+```java
+get("/x").then().log().ifError(). ..
+```
+* If you want to print the response body regardless of the status code you can do:
+```java
+get("/x").then().log().body() ..
+```
+
+**Log if validation fails**
+* Since REST Assured 2.3.1 you can log the request or response only if the validation fails. To log the request do:
+```java
+given().log().ifValidationFails(). ..
+        
+.. .then().log().ifValidationFails(). ..
+```
+
+* It's also possible to enable this for both the request and the response at the same time using the LogConfig:
+```java
+given().config(RestAssured.config().logConfig(logConfig().enableLoggingOfRequestAndResponseIfValidationFails(HEADERS))). ..
+```
+* This will log only the headers if validation fails.
+
+**Blacklist Headers from Logging**
+* As of REST Assured 4.2.0 it's possible to blacklist headers so that they are not shown in the request or response log. Instead the header value will be replaced with [ BLACKLISTED ]. You can enable this per header basis using the LogConfig:
+```java
+given().config(config().logConfig(logConfig().blacklistHeader("Accept"))). ..
+```
+
 ### Handling Headers
+
+* Headers consist of meta-data that are sent along with a request and response.
+* 
+
 
 ### Request Specification
 
