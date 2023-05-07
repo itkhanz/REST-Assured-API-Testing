@@ -145,7 +145,8 @@ println query
 
 > JSONPath and XMLPath are added as transitive dependencies automatically when rest-assured is added.
 
-> Intellij Tip! Use the shortcut Ctrl+alt+shift+v to paste the code without auto-formatting. Hence it keeps the formatting of the copied code.
+> Intellij Tip! Use the shortcut Ctrl+alt+shift+v to paste the code without auto-formatting. Hence it keeps the
+> formatting of the copied code.
 
 * [Static Imports](https://github.com/rest-assured/rest-assured/wiki/Usage#static-imports)
 * In order to use REST assured effectively it's recommended to statically import methods from the following classes:
@@ -198,32 +199,37 @@ public class HelloWorldTest {
 
 * All the information that needs to be sent as a part of the request such as path parameters, query parameters, headers,
   authorization, and request body etc are to be included in `given()` method.
-* `when()` represents the action that is going to take place such as execute HTTP request methods like GET POST etc on a given URL.
-* `then()` represents the outcome of the event that got executed in `when()`. The output can be validated in `then()` such as response code, headers body, cookie.
+* `when()` represents the action that is going to take place such as execute HTTP request methods like GET POST etc on a
+  given URL.
+* `then()` represents the outcome of the event that got executed in `when()`. The output can be validated in `then()`
+  such as response code, headers body, cookie.
 * `AutomateGet` class in the Practice package has the example of Postman API for automating workspaces endpoint.
-* The response can be extracted with `extract()` method and save it as an object of `Response` class. Response can be converted to string with `asString()`method.
-* Following code snipped shows multiple ways to extract the single field from `Response res` object: 
+* The response can be extracted with `extract()` method and save it as an object of `Response` class. Response can be
+  converted to string with `asString()`method.
+* Following code snipped shows multiple ways to extract the single field from `Response res` object:
+
 ```java
         //first way
-        System.out.println("Workspace name = " + JsonPath.from(res.asString()).getString("workspaces[0].name"));
+        System.out.println("Workspace name = "+JsonPath.from(res.asString()).getString("workspaces[0].name"));
 
-        //second way
-        System.out.println("Workspace name = " + res.path("workspaces[0].name"));
+                //second way
+                System.out.println("Workspace name = "+res.path("workspaces[0].name"));
 
-        //third way
-        JsonPath jpath = new JsonPath(res.asString());
-        System.out.println("Workspace name = " + jpath.getString("workspaces[0].name"));
+                //third way
+                JsonPath jpath=new JsonPath(res.asString());
+                System.out.println("Workspace name = "+jpath.getString("workspaces[0].name"));
 ```
 
 #### Hamcrest Assertion on Extracted response
 
 * `import static org.hamcrest.MatcherAssert.assertThat;` and assert with hamcrest `assertThat()` method.
+
 ```java
         //Hamcrest assertion
-        assertThat(name, equalTo("My Workspace"));
-        
-        //TestNG assertion
-        Assert.assertEquals(name, "My Workspace");
+        assertThat(name,equalTo("My Workspace"));
+
+                //TestNG assertion
+                Assert.assertEquals(name,"My Workspace");
 ```
 
 #### What is Hamcrest
@@ -234,11 +240,13 @@ public class HelloWorldTest {
 * [Hamcrest Matcher Interface Documentation](https://hamcrest.org/JavaHamcrest/javadoc/2.2/)
 
 ##### Advantages
+
 * Human readable and in plain english
 * Code is neat and intuitive
 * Provides thin methods like "is" and "not", also called as decorators, for more readibility
 
 ##### Hamcrest vs TestNG
+
 * Readability
 * Descriptive error messages
 * Type Safety
@@ -246,6 +254,7 @@ public class HelloWorldTest {
 #### Hamcrest Collection Matchers
 
 ##### Collection matchers (List, Array, Map, etc.)
+
 * hasItem() -> check single element in a collection
 * not(hasItem()) -> check single element is NOT in a collection
 * hasItems() -> Check all elements are in a collection
@@ -263,15 +272,18 @@ public class HelloWorldTest {
 * anyOf() -> Matches if any of the matchers matches
 
 ##### Numbers:
+
 * greaterThanOrEqualTo()
 * lessThan()
 * lessThanOrEqualTo()
 
 ##### String:
+
 * containsString()
 * emptyString()
 
-* The matchers usage is demonstrated in the methods `validate_response_body_hamcrest_learnings()` and `validate_response_body()` in the `AutomateGet` class in the Practice package.
+* The matchers usage is demonstrated in the methods `validate_response_body_hamcrest_learnings()`
+  and `validate_response_body()` in the `AutomateGet` class in the Practice package.
 
 ### Logging
 
@@ -279,56 +291,143 @@ public class HelloWorldTest {
 * The `Logging` class in the practice package demonstrates the different logging methods with example test cases.
 
 **Request Logging**
+
 ```java
-given().log().all(). .. // Log all request specification details including parameters, headers and body
-given().log().params(). .. // Log only the parameters of the request
-given().log().body(). .. // Log only the request body
-given().log().headers(). .. // Log only the request headers
-given().log().cookies(). .. // Log only the request cookies
-given().log().method(). .. // Log only the request method
-given().log().path(). .. // Log only the request path
+given().log().all()... // Log all request specification details including parameters, headers and body
+        given().log().params()... // Log only the parameters of the request
+        given().log().body()... // Log only the request body
+        given().log().headers()... // Log only the request headers
+        given().log().cookies()... // Log only the request cookies
+        given().log().method()... // Log only the request method
+        given().log().path()... // Log only the request path
 ```
 
 **Response Logging**
+
 ```java
-get("/x").then().log().statusLine(). .. // Only log the status line
-get("/x").then().log().headers(). .. // Only log the response headers
-get("/x").then().log().cookies(). .. // Only log the response cookies
+get("/x").then().log().statusLine()... // Only log the status line
+        get("/x").then().log().headers()... // Only log the response headers
+        get("/x").then().log().cookies()... // Only log the response cookies
 ```
 
-* If you're only interested in printing the response body if an error occur then you can use: 
+* If you're only interested in printing the response body if an error occur then you can use:
+
 ```java
-get("/x").then().log().ifError(). ..
+get("/x").then().log().ifError()...
 ```
+
 * If you want to print the response body regardless of the status code you can do:
+
 ```java
-get("/x").then().log().body() ..
+get("/x").then().log().body()..
 ```
 
 **Log if validation fails**
+
 * Since REST Assured 2.3.1 you can log the request or response only if the validation fails. To log the request do:
+
 ```java
-given().log().ifValidationFails(). ..
-        
-.. .then().log().ifValidationFails(). ..
+given().log().ifValidationFails()...
+
+        ...then().log().ifValidationFails()...
 ```
 
 * It's also possible to enable this for both the request and the response at the same time using the LogConfig:
+
 ```java
-given().config(RestAssured.config().logConfig(logConfig().enableLoggingOfRequestAndResponseIfValidationFails(HEADERS))). ..
+given().config(RestAssured.config().logConfig(logConfig().enableLoggingOfRequestAndResponseIfValidationFails(HEADERS)))...
 ```
+
 * This will log only the headers if validation fails.
 
 **Blacklist Headers from Logging**
-* As of REST Assured 4.2.0 it's possible to blacklist headers so that they are not shown in the request or response log. Instead the header value will be replaced with [ BLACKLISTED ]. You can enable this per header basis using the LogConfig:
+
+* As of REST Assured 4.2.0 it's possible to blacklist headers so that they are not shown in the request or response log.
+  Instead the header value will be replaced with [ BLACKLISTED ]. You can enable this per header basis using the
+  LogConfig:
+
 ```java
-given().config(config().logConfig(logConfig().blacklistHeader("Accept"))). ..
+given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
 ```
 
 ### Handling Headers
 
 * Headers consist of meta-data that are sent along with a request and response.
-* 
+* `AutomateHeaders` class contains the example code snippets for demonstrating various headers methods in REST Assured.
+
+##### Set Mock Environment for Headers
+
+* copy the Url of the Mock Server from created mock collection.
+* create the mock examples `headerValue1` and `headerValue2` and add the headers `responseHeader`
+  and `Content-Type: application/json` and body message information in examples.
+* `x-mock-match-request-headers` request header should contain the name of the header in examples so the server can
+  decide which response to return based on this header value.
+* Server will return the response header and body according to the request header.
+*
+
+<img src="doc/mock-headers.png" alt="mock headers">
+<img src="doc/mock-header-value1.png" alt="mock headers example 1">
+
+```java
+        Header header=new Header("headerName","value1");
+        Header matchHeader=new Header("x-mock-match-request-headers","headerName");
+        given().
+        baseUri(BASEURI).
+        header(header).
+        header(matchHeader).
+        when().
+```
+
+##### Multiple Headers in Request - Using Headers
+
+* The disadvantage of the above approach is that for many headers, the `header()` method has to be repeated many times.
+* We can use the `Headers` object and `headers()` method provided by REST Assured to group the headers and pass
+  together.
+
+```java
+        Header header=new Header("headerName","value1");
+        Header matchHeader=new Header("x-mock-match-request-headers","headerName");
+
+        Headers headers=new Headers(header,matchHeader);
+        given().
+        baseUri(BASEURI).
+        headers(headers).
+```
+
+##### Multiple Headers in Request - Using Map
+
+* Alternatively, we can create the map of headers as key-value pairs strings and pass it directly to `headers()` method.
+* `headers()` method is overloaded and it can accept map as well as Headers object.
+
+```java
+        HashMap<String, String> headers=new HashMap<String, String>();
+        headers.put("headerName","value1");
+        headers.put("x-mock-match-request-headers","headerName");
+
+        given().
+        baseUri(BASEURI).
+        headers(headers).
+```
+
+##### Multi Value Header
+
+* [Multi value parameters](https://github.com/rest-assured/rest-assured/wiki/Usage#multi-value-parameter)
+* Multi-value headers can be passed either directly to headers() method or with `Headers` object and passing
+  multiple `Header` object key-value pairs to it.
+```java
+        Header header1 = new Header("multiValueHeader", "value1");
+        Header header2 = new Header("multiValueHeader", "value2");
+
+        Headers headers = new Headers(header1, header2);
+
+        given().
+                baseUri(BASEURI).
+                headers(headers).
+```
+
+* Response header can also be validated by putting inside `header()` method after `then()`. You can assert for multiple headers in  the same call to `headers()` also.
+* If you need to perform further operations on header, then you can `extract().headers()` method and save it as `Headers` object.
+* you can use the `Headers.getValues()` method to extract the multi value header in a list.
 
 
 ### Request Specification
