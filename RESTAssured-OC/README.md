@@ -433,7 +433,9 @@ given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
 * you can use the `Headers.getValues()` method to extract the multi value header in a list.
 
 ### Request Specification
-* All the code snippets for this section are implemented under `RequestSpecificationExample.java` class in Practice package.
+
+* All the code snippets for this section are implemented under `RequestSpecificationExample.java` class in Practice
+  package.
 * RequestSpecification can be used to write test cases in style other than BDD.
 * `given()` method returns the reference of the interface `RequestSpecification`.
 * So what is happening is when we say that the given method returns, the reference of the interface, it is indirectly
@@ -443,16 +445,17 @@ given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
 
 ```java
         RequestSpecification requestSpecification=given()
-        .baseUri(BASEURI)
-        .header("X-Api-Key",API_KEY);
+            .baseUri(BASEURI)
+            .header("X-Api-Key",API_KEY)
+        ;
 
         given()
-        .spec(requestSpecification).
+            .spec(requestSpecification).
         when()
-        .get("/workspaces")
+            .get("/workspaces")
         .then()
-        .log().all()
-        .assertThat().statusCode(200)
+            .log().all()
+            .assertThat().statusCode(200)
         ;
 ```
 
@@ -465,7 +468,7 @@ given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
 
 @BeforeClass
 public void beforeClass(){
-        requestSpecification=with()
+        requestSpecification = with()
         .baseUri(BASEURI)
         .header("X-Api-Key",API_KEY);
         }
@@ -473,12 +476,12 @@ public void beforeClass(){
 @Test
 public void validate_status_code(){
         given()
-        .spec(requestSpecification).
+            .spec(requestSpecification).
         when()
-        .get("/workspaces")
+            .get("/workspaces")
         .then()
-        .log().all()
-        .assertThat().statusCode(200)
+            .log().all()
+            .assertThat().statusCode(200)
         ;
         }
 ```
@@ -490,10 +493,10 @@ public void validate_status_code(){
 
 @BeforeClass
 public void beforeClass(){
-        requestSpecification=with()
-        .baseUri(BASEURI)
-        .header("X-Api-Key",API_KEY)
-        .log().all()
+        requestSpecification = with()
+            .baseUri(BASEURI)
+            .header("X-Api-Key",API_KEY)
+            .log().all()
         ;
         }
 
@@ -516,8 +519,10 @@ public void validate_response_body(){
 * You can also chain the methods in RequestSpecBuilder instead of defining them separately as in below snippet.
 * if you have got multiple request specifications, then you can set one of those specifications as default. So in that
   case you do not have to explicitly use the requestSpecification in the given() method in your test case.
-* Instead of collecting the value in the requestSpecification instance variable, we can use the static variable from the RestAssured class.
-* If you want to get the information from the RequestSpecification like headers or BaseUrl, you can query it using `QueryableRequestSpecification`
+* Instead of collecting the value in the requestSpecification instance variable, we can use the static variable from the
+  RestAssured class.
+* If you want to get the information from the RequestSpecification like headers or BaseUrl, you can query it
+  using `QueryableRequestSpecification`
 
 ```java
     @BeforeClass
@@ -532,8 +537,8 @@ public void beforeClass(){
 
 @Test
 public void queryTest(){
-        QueryableRequestSpecification queryableRequestSpecification=SpecificationQuerier
-                                        .query(RestAssured.requestSpecification);
+        QueryableRequestSpecification queryableRequestSpecification = SpecificationQuerier
+            .query(RestAssured.requestSpecification);
         System.out.println(queryableRequestSpecification.getBaseUri());
         System.out.println(queryableRequestSpecification.getHeaders());
         }
@@ -553,6 +558,32 @@ public void validate_response_body(){
 ```
 
 ### Response Specification
+
+* ALL the code snippets for this section are present in `ResoibseSpecificationExample.java` class in practice package.
+* Similar to the `RequestSpecification`, you can also build the `ResponseSpecification` and replace the `then()` method
+  also from your tests.
+* Common validations such as status code and content type can be validated with the help of `ResponseSpecification` so
+  we dont need to duplicate these validations for each test case.
+* Only if you need to extract the `Response` to validate the specific body in test, then you can also extract the
+  response in `then()`.
+* You can assert for the default response in the ResponseSpecification.
+
+```java
+    ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder()
+                .expectStatusCode(200)
+                .expectContentType(ContentType.JSON)
+                .log(LogDetail.ALL)
+                ;
+        RestAssured.responseSpecification = responseSpecBuilder.build();
+        
+    @Test
+    public void validate_status_code() {
+
+        //Using Response Specification Builder
+        get("/workspaces");
+
+    }
+```
 
 ### Automate POST, PUT and DELETE
 
