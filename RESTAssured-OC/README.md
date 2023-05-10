@@ -414,23 +414,143 @@ given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
 * [Multi value parameters](https://github.com/rest-assured/rest-assured/wiki/Usage#multi-value-parameter)
 * Multi-value headers can be passed either directly to headers() method or with `Headers` object and passing
   multiple `Header` object key-value pairs to it.
-```java
-        Header header1 = new Header("multiValueHeader", "value1");
-        Header header2 = new Header("multiValueHeader", "value2");
 
-        Headers headers = new Headers(header1, header2);
+```java
+        Header header1=new Header("multiValueHeader","value1");
+        Header header2=new Header("multiValueHeader","value2");
+
+        Headers headers=new Headers(header1,header2);
 
         given().
-                baseUri(BASEURI).
-                headers(headers).
+        baseUri(BASEURI).
+        headers(headers).
 ```
 
-* Response header can also be validated by putting inside `header()` method after `then()`. You can assert for multiple headers in  the same call to `headers()` also.
-* If you need to perform further operations on header, then you can `extract().headers()` method and save it as `Headers` object.
+* Response header can also be validated by putting inside `header()` method after `then()`. You can assert for multiple
+  headers in the same call to `headers()` also.
+* If you need to perform further operations on header, then you can `extract().headers()` method and save it
+  as `Headers` object.
 * you can use the `Headers.getValues()` method to extract the multi value header in a list.
 
-
 ### Request Specification
+* All the code snippets for this section are implemented under `RequestSpecificationExample.java` class in Practice package.
+* RequestSpecification can be used to write test cases in style other than BDD.
+* `given()` method returns the reference of the interface `RequestSpecification`.
+* So what is happening is when we say that the given method returns, the reference of the interface, it is indirectly
+  returning the object of the class that implements the interface. So basically the object of the class that implements
+  all the abstract methods that are available in the interface. So basically, once we get the object of the class, it
+  means we get access to the implemented methods.
+
+```java
+        RequestSpecification requestSpecification=given()
+        .baseUri(BASEURI)
+        .header("X-Api-Key",API_KEY);
+
+        given()
+        .spec(requestSpecification).
+        when()
+        .get("/workspaces")
+        .then()
+        .log().all()
+        .assertThat().statusCode(200)
+        ;
+```
+
+* you can also use `with()` method instead of `given()` method as there is no difference functionality wise.
+* To reuse the requestSpecification object, create a class variable and initialize the requestSpecification in TestNG
+  BeforeClass hook.
+
+```java
+    RequestSpecification requestSpecification;
+
+@BeforeClass
+public void beforeClass(){
+        requestSpecification=with()
+        .baseUri(BASEURI)
+        .header("X-Api-Key",API_KEY);
+        }
+
+@Test
+public void validate_status_code(){
+        given()
+        .spec(requestSpecification).
+        when()
+        .get("/workspaces")
+        .then()
+        .log().all()
+        .assertThat().statusCode(200)
+        ;
+        }
+```
+
+* Now we can start to convert our test cases from BDD to non-BDD style.
+
+```java
+    RequestSpecification requestSpecification;
+
+@BeforeClass
+public void beforeClass(){
+        requestSpecification=with()
+        .baseUri(BASEURI)
+        .header("X-Api-Key",API_KEY)
+        .log().all()
+        ;
+        }
+
+@Test
+public void validate_status_code(){
+        Response response=requestSpecification.get("/workspaces").then().log().all().extract().response();
+        assertThat(response.statusCode(),is(equalTo(200)));
+        }
+
+@Test
+public void validate_response_body(){
+        Response response=requestSpecification.get("/workspaces").then().log().all().extract().response();
+        assertThat(response.path("workspaces[0].name").toString(),equalTo("My Workspace"));
+        }
+```
+
+* Rest Assured provides us an alternative way of creating RequestSpecification using `RequestSpecBuilder`
+* You can also add more information to the request header for individual tests
+  by `given(requestSpecification).header("dummyHeader", "dummyValue")`
+* You can also chain the methods in RequestSpecBuilder instead of defining them separately as in below snippet.
+* if you have got multiple request specifications, then you can set one of those specifications as default. So in that
+  case you do not have to explicitly use the requestSpecification in the given() method in your test case.
+* Instead of collecting the value in the requestSpecification instance variable, we can use the static variable from the RestAssured class.
+* If you want to get the information from the RequestSpecification like headers or BaseUrl, you can query it using `QueryableRequestSpecification`
+
+```java
+    @BeforeClass
+public void beforeClass(){
+        RequestSpecBuilder requestSpecBuilder=new RequestSpecBuilder();
+        requestSpecBuilder.setBaseUri(BASEURI);
+        requestSpecBuilder.addHeader("X-Api-Key",API_KEY);
+        requestSpecBuilder.log(LogDetail.ALL);
+
+        RestAssured.requestSpecification=requestSpecBuilder.build();
+        }
+
+@Test
+public void queryTest(){
+        QueryableRequestSpecification queryableRequestSpecification=SpecificationQuerier
+                                        .query(RestAssured.requestSpecification);
+        System.out.println(queryableRequestSpecification.getBaseUri());
+        System.out.println(queryableRequestSpecification.getHeaders());
+        }
+
+@Test
+public void validate_status_code(){
+        //Method 3: non BDD Style using Spec Builder
+        Response response=get("/workspaces").then().log().all().extract().response();
+        assertThat(response.statusCode(),is(equalTo(200)));
+        }
+
+@Test
+public void validate_response_body(){
+        Response response=get("/workspaces").then().log().all().extract().response();
+        assertThat(response.path("workspaces[0].name").toString(),equalTo("My Workspace"));
+        }
+```
 
 ### Response Specification
 
