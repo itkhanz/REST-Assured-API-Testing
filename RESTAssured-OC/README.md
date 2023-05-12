@@ -372,9 +372,9 @@ given().config(config().logConfig(logConfig().blacklistHeader("Accept")))...
         Header header=new Header("headerName","value1");
         Header matchHeader=new Header("x-mock-match-request-headers","headerName");
         given().
-        baseUri(BASEURI).
-        header(header).
-        header(matchHeader).
+            baseUri(BASEURI).
+            header(header).
+            header(matchHeader).
         when().
 ```
 
@@ -559,7 +559,7 @@ public void validate_response_body(){
 
 ### Response Specification
 
-* ALL the code snippets for this section are present in `ResoibseSpecificationExample.java` class in practice package.
+* ALL the code snippets for this section are present in `ResponseSpecificationExample.java` class in practice package.
 * Similar to the `RequestSpecification`, you can also build the `ResponseSpecification` and replace the `then()` method
   also from your tests.
 * Common validations such as status code and content type can be validated with the help of `ResponseSpecification` so
@@ -586,6 +586,45 @@ public void validate_response_body(){
 ```
 
 ### Automate POST, PUT and DELETE
+
+* Check the code snippets in `AutomatePost`, `AutomatePut`, and `AutomateDelete` methods to find the implementation.
+* [Postman create a workspace API](https://www.postman.com/postman/workspace/postman-public-workspace/request/12959542-2f0d2b46-1005-4972-9160-18c60bc49336)
+* [Postman update a workspace API](https://www.postman.com/postman/workspace/postman-public-workspace/request/12959542-22a3d4b5-450c-4275-bfa0-45614cdfc7ad)
+* [Postman delete a workspace API](https://www.postman.com/postman/workspace/postman-public-workspace/request/12959542-44d8e5da-ab62-426d-a015-6ae87bcc4c2c)
+* `body()`method can accept body as multiple types such as String, byte, Object, file and ObjectMapper. Currently we are
+  passing body as String by copy paste it from Postman and IntelliJ will format it automatically for us.
+* The regex pattern `^[a-z0-9-]{36}$` validate that the id of the collection should only contain alphanumeric characters and the length should be 36.
+* [Regex validator and explainer online](regex101.com)
+* POST request BDD Style:
+```java
+        given().
+                body(payload).
+        when().
+                post("/workspaces").
+        then().
+                log().all().
+                assertThat().
+                body("workspace.name", equalTo("myFirstWorkspace"),
+                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));
+```
+* POST request non-BDD Style:
+```java
+        Response response = with().
+                body(payload).
+                post("/workspaces");
+        assertThat(response.<String>path("workspace.name"), equalTo("myFirstWorkspace2"));
+        assertThat(response.<String>path("workspace.id"), matchesPattern("^[a-z0-9-]{36}$"));
+```
+> Observation: Logging works only with the non-default response specification built with the response spec builder. It does not work with the default response specification.
+* 
+* You can pass the path parameters with `pathParam()` method in rest assured to append it to the end point:
+```java
+        given().
+                body(payload).
+                pathParam("workspaceId", workspaceId).
+        when().
+                put("/workspaces/{workspaceId}").
+```
 
 ### Send Request Payload multiple ways
 
