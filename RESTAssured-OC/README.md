@@ -628,7 +628,110 @@ public void validate_response_body(){
 
 ### Send Request Payload multiple ways
 
+* As discussed previously, payload can be sent in different forms. We can send the JSON file as payload:
+```java
+        File file = new File("src/test/resources/payload/createWorkspacePayload.json");
+        given().
+                body(file).
+```
+* Or we can send the payload as Hashmap. Since our payload contains nested JSON sop we created nested Hashmap to store
+  workspace as key-value pairs of another hashmap.
+```java
+    HashMap<String, Object> mainObject = new HashMap<String, Object>();
+
+    HashMap<String, String> nestedObject = new HashMap<String, String>();
+    nestedObject.put("name", "myThirdWorkspace");
+    nestedObject.put("type", "personal");
+    nestedObject.put("description", "Rest Assured created this");
+
+    mainObject.put("workspace", nestedObject);
+
+    given().
+            body(mainObject).
+```
+> To serialize the object, we need any JSON serializer such as Jackson Databind, Gson etc in classPath. 
+> It will help convert Hashmap to JSON object. Therefore, we need to add this dependency into POM.xml
+
+* REST Assured does this under the hood using libraries like Jackson Databind. Jackson does the heavy lifting of
+  converting the Java objects back to JSON. REST Assured then sends the JSON as the request payload as part of the API
+  request that goes to the server.
+* We can also send the request body as JSON array using Arraylist.
+* First create a mock post request with a following payload:
+```json
+[
+    {"id": "5001", "type": "None" },
+    {"id": "5002", "type": "Glazed" }
+]
+```
+* We can use the header `x-mock-match-request-body` and set it to true which basically only returns the successful response if the body in request matches the body in example.
+* For this payload, we need a List of nested Hashmaps. Two hashmaps will be required to add to List.
+* REST Assured by default uses utf-8 content type encoding for the content type.
+* UTF-8 is the default encoding format supported by HTML5 by default.
+* To deal with this issue, we can either tell the REST Assured to not use the default encoding format to Content-Type Header:
+```java
+  .setConfig(config.encoderConfig(EncoderConfig.encoderConfig()
+          .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+  .setContentType(ContentType.JSON)
+```
+* Or we can define it by ourselves as below. Make it change also in Postman.
+```java
+.setContentType("application/json;charset=utf-8")
+```
+* Read more on Rest Assured Wiki [Encoder Config](https://github.com/rest-assured/rest-assured/wiki/Usage#encoder-config)
+* Code snippet for this concept can be found in `RequestPayloadAsJsonArray.java` class under practice package.
+```java
+        HashMap<String, String> obj5001 = new HashMap<String, String>();
+        obj5001.put("id", "5001");
+        obj5001.put("type", "None");
+
+        HashMap<String, String> obj5002 = new HashMap<String, String>();
+        obj5002.put("id", "5002");
+        obj5002.put("type", "Glazed");
+
+        List<HashMap<String, String>> jsonList = new ArrayList<HashMap<String, String>>();
+        jsonList.add(obj5001);
+        jsonList.add(obj5002);
+
+        given().
+                body(jsonList).
+        when().
+                post("/post").
+```
+
 ### Send Complex JSON as Request Payload
+
+* In this section, we will pass a complex JSON as request body. Code snipped can be found in `RequestPayloadComplexJson`
+* The complex JSON is taken from [Adobe opensource](https://opensource.adobe.com/Spry/samples/data_region/JSONDataSetSample.html)
+```json
+{
+	"id": "0001",
+	"type": "donut",
+	"name": "Cake",
+	"ppu": 0.55,
+	"batters":
+		{
+			"batter":
+				[
+					{ "id": "1001", "type": "Regular" },
+					{ 
+                      "id": [5, 9],
+                      "type": "Chocolate"
+                    }
+				]
+		},
+	"topping":
+		[
+			{ "id": "5001", "type": "None" },
+			{ 
+              "id": "5002", 
+              "type": ["test1", "test2"]
+            }
+		]
+}
+```
+* First we will create a mock request for this using Postman, and then automate this using Hashmap and ArrayList in Rest Assured.
+* For better  visibility, parse this complex JSON using any online tool e.g. [JSON Path Finder](https://jsonpathfinder.com/)
+* 
 
 ### Handling Request Parameters
 

@@ -9,12 +9,15 @@ import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.util.HashMap;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class AutomatePost {
-    private static String API_KEY = ""; //generate your own Postman API key
+    private static String API_KEY = "PMAK-6455f9b49325834e17608e53-b058fd3c61204a094907349da19ce72794"; //generate your own Postman API key
     private static String BASEURI = "https://api.postman.com";
 
     @BeforeClass
@@ -71,5 +74,41 @@ public class AutomatePost {
 
         assertThat(response.<String>path("workspace.name"), equalTo("myFirstWorkspace2"));
         assertThat(response.<String>path("workspace.id"), matchesPattern("^[a-z0-9-]{36}$"));
+    }
+
+    @Test
+    public void validate_post_request_payload_from_file(){
+        File file = new File("src/test/resources/payload/createWorkspacePayload.json");
+        given().
+                body(file).
+        when().
+                post("/workspaces").
+        then().
+                log().all().
+                assertThat().
+                body("workspace.name", equalTo("mySecondWorkspace"),
+                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));
+    }
+
+    @Test
+    public void validate_post_request_payload_as_map(){
+        HashMap<String, Object> mainObject = new HashMap<String, Object>();
+
+        HashMap<String, String> nestedObject = new HashMap<String, String>();
+        nestedObject.put("name", "myThirdWorkspace");
+        nestedObject.put("type", "personal");
+        nestedObject.put("description", "Rest Assured created this");
+
+        mainObject.put("workspace", nestedObject);
+
+        given().
+                body(mainObject).
+        when().
+                post("/workspaces").
+        then().
+                log().all().
+                assertThat().
+                body("workspace.name", equalTo("myThirdWorkspace"),
+                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));
     }
 }
