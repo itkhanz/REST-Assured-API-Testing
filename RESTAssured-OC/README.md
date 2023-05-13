@@ -762,9 +762,46 @@ public void validate_response_body(){
 * Rest Assured provide methods called multiPart that allows you to specify a file, byte-array, input stream or text to upload.
 * The response body of the Postman echo API will display the form-data in `form` argument.
 * You can use the `multiPart()` method in REST Assured to send the form-data.
-* 
 
 ### File upload and download
+
+* Code snippets for this section is in `FileUploadDownload.java` class under practice package.
+* File can be uploaded using `multiPart()` as well. We will use the Postman Echo API to test this which will return the file
+  name and value in form attributes as response body.
+* In case of Multipart form data, the default content type used by REST Assured for the text data is `text/plain`
+* Along with the file we need to send some attributes of the file i.e. file name and parent.
+```java
+        String attributes = "{\"name\":\"temp.txt\",\"parent\":{\"id\":\"123456\"}}";
+        given().
+                baseUri("https://postman-echo.com").
+                multiPart("file", new File("temp.txt")).
+                multiPart("attributes", attributes, "application/json").
+```
+* For practicing download, you can choose to download any publicly available file from GitHub.
+* Navigate to the file and open Network Tab, click on Download icon, which will download the file and in the Headers
+  section of the file name in network tab, you can view the Request URL.
+* [Practice Download file url](https://github.com/appium-boneyard/tutorial/blob/master/projects/ruby_ios/appium.txt)
+* REST Assured supports extracting response as Byte array as well as Input stream.
+* After that we need to write these bytes to a new file for which we use `new FileOutputStream()`
+```java
+    @Test
+    public void download_file() throws IOException {
+        byte[] bytes = given()
+                .baseUri("https://raw.githubusercontent.com")
+                .log().all().
+        when().
+                get("/appium-boneyard/tutorial/master/projects/ruby_ios/appium.txt").
+        then().
+                log().all()
+                .extract()
+                .response()
+                .asByteArray();
+
+        OutputStream os = new FileOutputStream(new File("downloaded-file.txt"));
+        os.write(bytes);
+        os.close();
+    }
+```
 
 ### Form URL Encoding
 
