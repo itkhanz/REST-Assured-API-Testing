@@ -756,7 +756,13 @@ public void validate_response_body(){
 
 ### Multipart Form Data
 
-
+* Code snippet for this section is in `RequestParameters.java` class under practice package.
+* When the client wants to send huge amounts of data to the server, `form-data` type is used in request body to send data as key-value pairs.
+* [Multi-part form data wiki](https://github.com/rest-assured/rest-assured/wiki/Usage#multi-part-form-data)
+* Rest Assured provide methods called multiPart that allows you to specify a file, byte-array, input stream or text to upload.
+* The response body of the Postman echo API will display the form-data in `form` argument.
+* You can use the `multiPart()` method in REST Assured to send the form-data.
+* 
 
 ### File upload and download
 
