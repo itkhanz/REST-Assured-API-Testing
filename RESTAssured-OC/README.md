@@ -805,6 +805,7 @@ public void validate_response_body(){
 
 ### Form URL Encoding
 
+* Code snippet for for this section can be found in `RequestParameters.java` class under practice package.
 * Aside from the `form-data`, we can also use the `x-www-form-urlencoded` format to send the data in a request body.
 * `application/x-www-form-urlencoded`: the keys and values are encoded in key-value tuples separated by '&', with a '='
   between the key and the value. Non-alphanumeric characters in both keys and values are URL encoded: this is the reason
@@ -816,9 +817,18 @@ public void validate_response_body(){
 
 ### JSON Schema Validation
 
-* 
+* Code snippet for for this section can be found in `JsonSchemaValidation.java` class under practice package.
+* [JSON Schema](https://json-schema.org/) is a declarative language that allows you to annotate and validate JSON documents.
+* [Generate JSON Schema from JSON](https://jsonschema.net/)
+* REST Assured has support for Json Schema validation. [Read More](https://github.com/rest-assured/rest-assured/wiki/Usage#json-schema-validation)
+* Download and install the maven dependency `JSON Schema Validator` from `io.rest-assured`
+* [Schema can only be located under root directory class path](https://stackoverflow.com/a/54093676)
+* CLASSPATH is an environment variable which is used by JVM  to locate and load the .class files to execute the code. 
+* if you keep the files in src/main/resources or src/test/resources then it will be in classpath and you can directly access the files without writing the absolute path. 
+* Fore more information, please refer https://www.geeksforgeeks.org/loading-resources-from-classpath-in-java-with-example/
 
 ### Filters
+
 
 ### Serialization and De-serialization
 

@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "args": {
+      "type": "object"
+    },
+    "headers": {
+      "type": "object",
+      "properties": {
+        "x-forwarded-proto": {
+          "type": "string"
+        },
+        "x-forwarded-port": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "x-amzn-trace-id": {
+          "type": "string"
+        },
+        "accept": {
+          "type": "string"
+        },
+        "user-agent": {
+          "type": "string"
+        },
+        "accept-encoding": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "x-forwarded-proto",
+        "x-forwarded-port",
+        "host",
+        "x-amzn-trace-id",
+        "accept",
+        "user-agent",
+        "accept-encoding"
+      ]
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "args",
+    "headers",
+    "url"
+  ]
+}
