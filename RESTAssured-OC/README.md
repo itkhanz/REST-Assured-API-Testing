@@ -805,7 +805,18 @@ public void validate_response_body(){
 
 ### Form URL Encoding
 
+* Aside from the `form-data`, we can also use the `x-www-form-urlencoded` format to send the data in a request body.
+* `application/x-www-form-urlencoded`: the keys and values are encoded in key-value tuples separated by '&', with a '='
+  between the key and the value. Non-alphanumeric characters in both keys and values are URL encoded: this is the reason
+  why this type is not suitable to use with binary data (use multipart/form-data instead)
+* [MDN Documentation on HTTP POST](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)
+* REST Assured provides a `formParam()` method for this to pass the request body as key-value pairs.
+* REST Assured appends the content-type header `charset=ISO-8859-1` by default to this content type so to remove this
+  header we can use: `encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)`
+
 ### JSON Schema Validation
+
+* 
 
 ### Filters
 
