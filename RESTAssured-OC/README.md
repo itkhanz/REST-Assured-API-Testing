@@ -731,11 +731,32 @@ public void validate_response_body(){
 ```
 * First we will create a mock request for this using Postman, and then automate this using Hashmap and ArrayList in Rest Assured.
 * For better  visibility, parse this complex JSON using any online tool e.g. [JSON Path Finder](https://jsonpathfinder.com/)
-* 
 
 ### Handling Request Parameters
 
+* Code snippet for this section is in `RequestParameters.java` class under practice package.
+* [Postman Echo](https://www.postman.com/postman/workspace/postman-public-workspace/collection/33232-4172eede-4afb-4704-9a5a-436cc0634195)
+* Postman Echo is service you can use to test your REST clients and make sample API calls. It provides endpoints for
+  GET, POST, PUT, various auth mechanisms and other utility endpoints.
+* Query parameters are the key-value pairs that we send as a part of URL request that gets appended to URL.
+* Postman echo will return the query parameters in `args` response argument.
+* We can use `param()` or `queryParam()` method from REST Assured to pass the query parameters.
+* Multiple query parameters can be passed by passing Hashmap thorough `queryParams()` method.
+* Multi-value query parameters can be passed as: `queryParam("foo1", "bar1;bar2;bar3")`.  You can also use `,` to separate query parameter values.
+* Path parameters can be passed using `pathParam()` method as follows. REST Assured will replace the value of userID at runtime.
+```java
+        given().
+                baseUri("https://reqres.in").
+                pathParam("userId", "2").
+                log().all().
+        when().
+                get("/api/users/{userId}").
+```
+* You can also pass multiple path parameters using `pathParams()` method by passing hashmap into it.
+
 ### Multipart Form Data
+
+
 
 ### File upload and download
 

@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class AutomatePost {
-    private static String API_KEY = "PMAK-6455f9b49325834e17608e53-b058fd3c61204a094907349da19ce72794"; //generate your own Postman API key
+    private static String API_KEY = ""; //generate your own Postman API key
     private static String BASEURI = "https://api.postman.com";
 
     @BeforeClass
