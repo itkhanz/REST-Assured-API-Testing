@@ -829,6 +829,23 @@ public void validate_response_body(){
 
 ### Filters
 
+* [Filters Wiki](https://github.com/rest-assured/rest-assured/wiki/Usage#filters)
+* A filter allows you to inspect and alter a request before it's actually committed and also inspect and alter the
+  response before it's returned to the expectations.
+* There are a couple of filters provided by REST Assured that are ready to use:
+  1. `io.restassured.filter.log.RequestLoggingFilter`: A filter that'll print the request specification details.
+  2. `io.restassured.filter.log.ResponseLoggingFilter`: A filter that'll print the response details if the response matches a given status code.
+  3. `io.restassured.filter.log.ErrorLoggingFilter`: A filter that'll print the response body if an error occurred (status code is between 400 and 500).
+* We can also print the logs to file via adding a filter in RequestSpecBuilder() to use it in a generic way and reusable manner:
+```java
+        PrintStream fileOutPutStream = new PrintStream(new File("restAssured.log"));
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder().
+                addFilter(new RequestLoggingFilter(fileOutPutStream)).
+                addFilter(new ResponseLoggingFilter(fileOutPutStream));
+        requestSpecification = requestSpecBuilder.build();
+```
+* 
 
 ### Serialization and De-serialization
 
