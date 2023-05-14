@@ -1,4 +1,4 @@
-package com.itkhan.practice;
+package com.itkhan.practice.postmanAPI;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.testng.Assert;

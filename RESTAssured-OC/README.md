@@ -829,6 +829,7 @@ public void validate_response_body(){
 
 ### Filters
 
+* Code snippet for for this section can be found in `Filters.java` class under practice package.
 * [Filters Wiki](https://github.com/rest-assured/rest-assured/wiki/Usage#filters)
 * A filter allows you to inspect and alter a request before it's actually committed and also inspect and alter the
   response before it's returned to the expectations.
@@ -845,9 +846,109 @@ public void validate_response_body(){
                 addFilter(new ResponseLoggingFilter(fileOutPutStream));
         requestSpecification = requestSpecBuilder.build();
 ```
-* 
 
 ### Serialization and De-serialization
+
+<img src="doc/serialization-deserialization.png" alt="Serialization and Deserialization in Java">
+
+<img src="doc/serialization-deserialization-restassured.png" alt="Serialization and Deserialization in Rest Assured">
+
+* REST Assured converts the Java object (POJO/Map/List) to JSON/XML with the help of third party libraries such as Jackson, GSON to send
+  request to the HTTP Server and to parse the response back to Java Object. This process of serialization and
+  deserialization is also called as Object Mapping.
+* [Object Mapping Wiki](https://github.com/rest-assured/rest-assured/wiki/Usage#object-mapping)
+* REST Assured supports mapping Java objects to and from JSON and XML. For JSON you need to have either Jackson,
+  Jackson2, Gson or Johnzon in the classpath and for XML you need Jakarta EE or JAXB.
+* We will use the `ObjectMapper` from `jackson.databind` class to serialize Map to JSON object using Jackson. In this case REST assured will not
+  perform serialization internally as we are explicitly serializing the Hashmap to String using ObjectMapper from
+  Jackson and passing it to request body.
+* Code example can be found in `JacksonAPI_JSONObject.class` under practice package:
+```java
+        HashMap<String, Object> mainObject = new HashMap<String, Object>();
+
+        HashMap<String, String> nestedObject = new HashMap<String, String>();
+        nestedObject.put("name", "myThirdWorkspace");
+        nestedObject.put("type", "personal");
+        nestedObject.put("description", "Rest Assured created this");
+
+        mainObject.put("workspace", nestedObject);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String mainObjectStr = objectMapper.writeValueAsString(mainObject);
+
+        given().
+                body(mainObjectStr).
+        when().
+                post("/workspaces").
+```
+
+* In similar way, the ArrayList can also be serialized to JSON using Jackson ObjectMapper.
+* Code example can be found in `JacksonAPI_JSONArray.class` under practice package.
+```java
+        HashMap<String, String> obj5001 = new HashMap<String, String>();
+        obj5001.put("id", "5001");
+        obj5001.put("type", "None");
+
+        HashMap<String, String> obj5002 = new HashMap<String, String>();
+        obj5002.put("id", "5002");
+        obj5002.put("type", "Glazed");
+
+        List<HashMap<String, String>> jsonList = new ArrayList<HashMap<String, String>>();
+        jsonList.add(obj5001);
+        jsonList.add(obj5002);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonListStr = objectMapper.writeValueAsString(jsonList);
+
+        given().
+                body(jsonListStr).
+        when().
+                post("/post").
+```
+
+* Instead of using the Hashmap, we can create the `ObjectNode` from `ObjectMapper.createObjectNode()` in Jackson and use
+  it to serialize to JSON. `ObjectNode` is similiar to Hashmap as it also has `put` method.
+
+```java
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode nestedObjectNode = objectMapper.createObjectNode();
+        nestedObjectNode.put("name", "myWorkspace3");
+        nestedObjectNode.put("type", "personal");
+        nestedObjectNode.put("description", "Rest Assured created this");
+
+        ObjectNode mainObjectNode = objectMapper.createObjectNode();
+        mainObjectNode.set("workspace", nestedObjectNode);
+
+        String mainObjectStr = objectMapper.writeValueAsString(mainObjectNode);
+
+        given().
+                body(mainObjectNode).
+```
+
+* Similarly instead of using ArrayList, we can create `ArrayNode` from `ObjectMapper.createArrayNode()` in Jackson to
+  serialize arraylist to JSON Array:
+
+```java
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNodeList = objectMapper.createArrayNode();
+
+        ObjectNode obj5001Node = objectMapper.createObjectNode();
+        obj5001Node.put("id", "5001");
+        obj5001Node.put("type", "None");
+
+        ObjectNode obj5002Node = objectMapper.createObjectNode();
+        obj5002Node.put("id", "5002");
+        obj5002Node.put("type", "Glazed");
+
+        arrayNodeList.add(obj5001Node);
+        arrayNodeList.add(obj5002Node);
+
+        String jsonListStr = objectMapper.writeValueAsString(arrayNodeList);
+
+        given().
+                body(jsonListStr).
+```
+* 
 
 ### Jackson Annotations
 

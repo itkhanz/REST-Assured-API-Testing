@@ -1,4 +1,4 @@
-package com.itkhan.practice;
+package com.itkhan.practice.postmanAPI;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
