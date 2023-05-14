@@ -1025,6 +1025,8 @@ public void validate_response_body(){
 * We can use the `@DataProvider` from TestNG to perform different validations and run multiple test cases using same POJO class.
 > Note: You need to have at least 1 team workspace in order to create another one. Sorry to disturb you.
 
+* Example solution for the assignment to serialize and deserialize the JSONPlaceholder API using POJO classes is
+  in `AssignmentPojoTest` where we created 3 nested pojo classes to pass the request and get response in POJO.
 * 
 
 ### Jackson Annotations
