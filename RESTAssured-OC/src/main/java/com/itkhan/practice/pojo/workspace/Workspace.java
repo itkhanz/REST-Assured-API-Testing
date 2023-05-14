@@ -1,4 +1,4 @@
-package com.itkhan.practice.pojo;
+package com.itkhan.practice.pojo.workspace;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

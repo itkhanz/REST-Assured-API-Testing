@@ -1078,6 +1078,265 @@ public void validate_response_body(){
 
 ### Complex POJO
 
+* complete code snippet for it can be found in `ComplexPojoTest.java` class under `practice.serializeDeserialize` package, and
+  the POJO classes for it can be found in `practice.pojo.collection` package in `src/main/java`
+* Let use a complex JSON payload to serialize and deserialize using POJO. We will use  the Postman create Collection API.
+* [Postman Create a Collection API](https://www.postman.com/postman/workspace/postman-public-workspace/request/12959542-049042b8-447f-4f71-8b79-ae978cf40a04)
+* This will create a collection with 2 items, first item will be the folder with a POST request inside it, and the
+  second item will be a GET request.
+* JSON payload for request payload:
+```json
+{
+	"collection": {
+		"info": {
+			"name": "Collection1024",
+			"description": "This is just a sample collection.",
+			"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		},
+		"item": [
+			{
+				"name": "This is a folder",
+				"item": [
+					{
+						"name": "Sample POST Request",
+						"request": {
+							"url": "https://postman-echo.com/post",
+							"method": "POST",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": {
+								"mode": "raw",
+								"raw": "{\"data\": \"123\"}"
+							},
+							"description": "This is a sample POST Request"
+						}
+					}
+				]
+			},
+			{
+				"name": "Sample GET Request",
+				"request": {
+					"url": "https://postman-echo/get",
+					"method": "GET",
+					"description": "This is a sample GET Request"
+				}
+			}
+		]
+	}
+}
+```
+* The response body of the postCollection API request will return response body with a following nested hashmap:
+```json
+{
+    "collection": {
+        "id": "1d24sfsda459-ca83-406c-bd48-fdsfcdf",
+        "name": "Sample Collection",
+        "uid": "11427920-1d24a459-ca83-406c-fsdzf-dafb9b852835"
+    }
+}
+```
+#### creating POJOs
+* Start with a root collection and gradually move down to nested levels.
+* Since `item` is an array/list of different types (can be a Folder or Request), we create a List of Objects for this.
+* for `Folder`, we can create a separate POJO. It will contain `name`, and `item` ArrayList.
+* `Folder` contains `RequestRoot` ArrayList which will contain name, and another nested `Request`.
+* Following figure illustrates the POJO classes for Collection Request and Response Payload:
+
+<img src="doc/collection-pojo.png" alt="collection POJO">
+
+#### Build Payload and Searlize
+* We will initialize the POJO classes with a data and then make the Request as follows:
+```java
+        Header header = new Header("Content-Type", "application/json");
+        List<Header> headerList = new ArrayList<Header>();
+        headerList.add(header);
+
+        Body body = new Body("raw", "{\"data\": \"123\"}");
+
+        Request request = new Request(
+                "https://postman-echo.com/post",
+                "POST",
+                headerList,
+                body,
+                "This is a sample Request"
+        );
+
+        RequestRoot requestRoot = new RequestRoot("Sample POST Request", request);
+        List<RequestRoot> requestRootList = new ArrayList<RequestRoot>();
+        requestRootList.add(requestRoot);
+
+        Folder folder = new Folder("This is a folder", requestRootList);
+        List<Folder> folderList = new ArrayList<Folder>();
+        folderList.add(folder);
+
+        Info info = new Info(
+                "Sample Collection1",
+                "This is just a sample collection.",
+                "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+        );
+
+        Collection collection = new Collection(info, folderList);
+
+        CollectionRoot collectionRoot = new CollectionRoot(collection);
+
+        given()
+                .body(collectionRoot)
+                .queryParam("workspace", WORKSPACE_ID)
+        .when()
+                .post("/collections")
+        .then()
+                .spec(responseSpecification)
+        ;
+```
+#### De-serialize and Assert Full Body with JSON Assert
+* We will deserialize the response body back to POJO.
+* As a part of assertion, we will do a full JSON Body comparison. We will make another API call to get the collections
+  and then use this response to compare against the collection created with our POST call. In order to get the
+  collection detail, we need to get the uid of the collection from GET call to retrieve all Collections.
+* The response for `getCollection` is quite similar to the `postCollection` except addition of some extra fields.
+* These extra fields must be added to the POJO classes and must be ignored during serialization.
+* We will use `@JsonIgnoreProperties(ignoreUnknown = true)` which means that Jackson will ignore any new property in the response that is not in the POJO Classes.
+* We get the `url` in the response body but its data type is changed from String to map. As a workarund we change the
+  type of url in response to `Object` so whatever the data type will be in response, Jackson will be able to deserialize
+  it.
+* For making full json body assertion, we need to exclude the URL field since data type is different in the response than the data type in the request.
+* Here, `JSONAssert` from `org.skyscreamer` library will be quite useful, as it gives option to exclude certain fields from full json body matching.
+* Add the above dependency from maven into POM.xml file
+* `JSONAssert` library needs Strings as inputs so we use the `ObjectMapper` to serialize the expected and actual CollectionRoot java objects to the JSON objects (as strings).
+```java
+        //Create a new Collection and retrieve the UID of the created collection
+        String collectionUid = given()
+                .body(collectionRoot)
+                .queryParam("workspace", WORKSPACE_ID)
+        .when()
+                .post("/collections")
+        .then()
+                .spec(responseSpecification)
+                .extract()
+                .response().path("collection.uid")
+        ;
+
+        //Make a GET coll to the collections API with UID of the created collection and deserialize the POJO
+        CollectionRoot deserializedCollectionRoot = given()
+            .pathParam("collectionUid", collectionUid)
+        .when()
+            .get("/collections/{collectionUid}")
+        .then()
+            .spec(responseSpecification)
+            .extract()
+            .response().as(CollectionRoot.class)
+        ;
+
+        //converting the POJO to Json objects (strings) for the JSONAssert
+        ObjectMapper objectMapper = new ObjectMapper();
+        String collectionRootStr = objectMapper.writeValueAsString(collectionRoot);
+        String deserializedCollectionRootStr = objectMapper.writeValueAsString(deserializedCollectionRoot);
+
+        //writing custom Comparator for full JSON Body assertion excluding URL field
+        //STRICT mode will also validate for order of the payload and response body, while LENIENT mode will ignore order
+        JSONAssert.assertEquals(collectionRootStr, deserializedCollectionRootStr,
+                new CustomComparator(JSONCompareMode.STRICT,
+                            new Customization("collection.item[*].item[*].request.url", new ValueMatcher<Object>() {
+                                public boolean equal(Object o1, Object o2) {
+                                    return true;
+                                }
+                            })
+                        )
+        );
+```
+
+#### Challenges
+* We have the following challenges:
+  * Different data type for `url` field in payload and response
+  * Not asserting the `url` field
+* We need separate POJO classes for Request and Response Payload. In Response Payload, we need to create POJO class
+  for `URL` becuase it is a JSON object.
+```java
+{
+	"url": {
+		"raw": "https://postman-echo.com/post",
+		"protocol": "https",
+		"host": [
+			"postman-echo",
+			"com"
+		],
+		"path": [
+			"post"
+		]
+	}
+}
+```
+
+* In order to avoid code duplication, we will create `Base` classes and then extend the Request and Response classes
+  from it.
+* Actual URL is present in the `raw` property of the Response payload inside `URL`, so we need to compare this field
+  with the URL in the request payload.
+
+#### Handle Different Data Types in Request and Response
+* We will refactor our POJO classes to support the deserialization of the URL field.
+* Common fields will be part of Base classes, and the different fields will be present in the child classes for Request and Response.
+* We make the `CollectionRoot` Base class to be extract.
+* `Info` field will be common for the `Collection` Base class but `Folder` field will be different for request and response because of the URL field.
+* `Folder`pojo class have name field in common for request and response, but the `RequestRoot`field is different.
+* Similarly, name field is common for `RequestRoot` pojo class, but the `Request` field is different.
+* For the `Request` pojo, except for the URL, all other fields are common.
+* Now we need to change the data type of URL to String in `RequestRequest` pojo.
+* And in the `RequestResponse`the data type of the URL is another POJO class `URL` since it has multiple fields.
+* Now in our test case, we will use our POJO Classes that represent the request payload.
+* We will also extract the response from GET call to Collections API in `CollectionRootResponse` for storing deserialized response.
+* So now we have two objects:
+  * `CollectionRootRequest collectionRoot` represents the request payload
+  * `CollectionRootResponse deserializedCollectionRoot` represents the response payload
+
+
+#### Assert Field with Different Data Types
+* Now we will extract the URL field and assert it.
+* If we look at the response, URL is part of the request, which is part of the request root, which is part of the request Folder.
+* Now we might want to create multiple requests at the time of creating collection, so we will have multiple URL fields for each of the request.
+* Therefore, we make the data type of the URL to be List so we can store multiple URLs
+```java
+        List<String> urlRequestList = new ArrayList<>();
+        List<String> urlResponseList = new ArrayList<>();
+
+        //Get all the URLs for request payload
+        for (RequestRootRequest requestRootRequest: requestRootList) {
+            System.out.println("URL from Request Payload: " + requestRootRequest.getRequest().getUrl());
+            urlRequestList.add(requestRootRequest.getRequest().getUrl());
+        }
+
+        //Get all the URLs for the response body
+        List<FolderResponse> folderResponseList = deserializedCollectionRoot.getCollection().getItem();
+        for (FolderResponse folderResponse: folderResponseList) {
+            List<RequestRootResponse> requestRootResponseList = folderResponse.getItem();
+            for (RequestRootResponse requestRootResponse: requestRootResponseList) {
+                URL url = requestRootResponse.getRequest().getUrl();
+                System.out.println("URL from Response Body: " + url.getRaw());
+                urlResponseList.add(url.getRaw());
+            }
+        }
+
+        //Check that the response URL is present in the request payload
+        assertThat(urlResponseList, containsInAnyOrder(urlRequestList.toArray()));
+```
+
+
+#### Automate One More Test Case
+
+* create a new empty collection.
+* Since this is an empty collection so we do not need Header, Body, RequestRequest and FolderRequest.
+* For the FolderList, we just pass an empty list.
+* In this case, the request payload and the JSON response will be similar so we do not need to use JSONAssert to exclude any field.
+* With the help of these POJO classes, we can automate scenarios for:
+  * Collection with multiple Folders
+  * Collection with One Folder and Multiple Requests inside the Folder
+  * Collection with only one Request
+  * Collection with Request with multiple Headers
+  * and so on ....
+
 ### Coding Challenges
 
 ### Authentication and Authorization

@@ -1,4 +1,4 @@
-package com.itkhan.practice.pojo;
+package com.itkhan.practice.pojo.jsonPlaceholder;
 
 public class Geo {
     private String lat;

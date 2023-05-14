@@ -1,8 +1,8 @@
 package com.itkhan.practice.serializeDeserialize;
 
-import com.itkhan.practice.pojo.Address;
-import com.itkhan.practice.pojo.Geo;
-import com.itkhan.practice.pojo.User;
+import com.itkhan.practice.pojo.jsonPlaceholder.Address;
+import com.itkhan.practice.pojo.jsonPlaceholder.Geo;
+import com.itkhan.practice.pojo.jsonPlaceholder.User;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;

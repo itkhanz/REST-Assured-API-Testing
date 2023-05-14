@@ -1,4 +1,4 @@
-package com.itkhan.practice.pojo;
+package com.itkhan.practice.pojo.workspace;
 
 public class WorkspaceRoot {
     public WorkspaceRoot(){

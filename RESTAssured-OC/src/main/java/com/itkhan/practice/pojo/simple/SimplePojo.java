@@ -1,4 +1,4 @@
-package com.itkhan.practice.pojo;
+package com.itkhan.practice.pojo.simple;
 
 public class SimplePojo {
     public SimplePojo(){

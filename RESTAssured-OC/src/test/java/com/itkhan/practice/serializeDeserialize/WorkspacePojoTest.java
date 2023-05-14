@@ -1,7 +1,7 @@
 package com.itkhan.practice.serializeDeserialize;
 
-import com.itkhan.practice.pojo.Workspace;
-import com.itkhan.practice.pojo.WorkspaceRoot;
+import com.itkhan.practice.pojo.workspace.Workspace;
+import com.itkhan.practice.pojo.workspace.WorkspaceRoot;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;

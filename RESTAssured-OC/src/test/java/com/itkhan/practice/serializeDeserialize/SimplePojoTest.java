@@ -2,7 +2,7 @@ package com.itkhan.practice.serializeDeserialize;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itkhan.practice.pojo.SimplePojo;
+import com.itkhan.practice.pojo.simple.SimplePojo;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
