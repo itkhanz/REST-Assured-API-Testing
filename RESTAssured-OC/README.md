@@ -975,6 +975,56 @@ public void validate_response_body(){
         assertThat(objectMapper.readTree(deserialzedPojoStr), equalTo(objectMapper.readTree(simplePojoStr)));
 ```
 
+* Now we will use POJO classes to reflect the workspaces collection of creating the workspace by making the POST request
+  to Postman API.
+* First we will create the POJO class for the nested object that contains name, type and description variables.
+* Now we will create the POJO class for the main object that contains the key workspace, and the above nested object. It
+  will contain the single variable of type `Workspace`
+```java
+    public class WorkspaceRoot {
+    public WorkspaceRoot(){
+    }
+
+    public WorkspaceRoot(Workspace workspace){
+        this.workspace = workspace;
+    }
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    Workspace workspace;
+}
+```
+
+* In the response, we will receive the id of the created workspace so we need to also create a variable for id
+  in `Workspace` Pojo so we can deserialize it for assertions.
+* Jackson looks for default constructor to perform deserialization,  therefore we add it also in POJO classes.
+```java
+        Workspace workspace = new Workspace("workspace4", "personal", "random description");
+        WorkspaceRoot workspaceRoot = new WorkspaceRoot(workspace);
+
+        WorkspaceRoot deserializedWorkspaceRoot =
+            given().
+                    body(workspaceRoot).
+            when().
+                    post("/workspaces").
+            then()
+                    .spec(responseSpecification)
+                    .extract().response().as(WorkspaceRoot.class);
+
+        assertThat(deserializedWorkspaceRoot.getWorkspace().getName(),
+                        equalTo(workspaceRoot.getWorkspace().getName()));
+        assertThat(deserializedWorkspaceRoot.getWorkspace().getId(),
+                        matchesPattern("^[a-z0-9-]{36}$"));
+```
+* We can use the `@DataProvider` from TestNG to perform different validations and run multiple test cases using same POJO class.
+> Note: You need to have at least 1 team workspace in order to create another one. Sorry to disturb you.
+
 * 
 
 ### Jackson Annotations
