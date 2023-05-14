@@ -64,7 +64,9 @@ public class WorkspacePojoTest {
                         "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));
         */
 
-        Workspace workspace = new Workspace("workspace4", "personal", "random description");
+        Workspace workspace = new Workspace("workspace10", "personal", "random description");
+        HashMap<String, String> myHashMap = new HashMap<String, String>();
+        workspace.setMyHashMap(myHashMap);
         WorkspaceRoot workspaceRoot = new WorkspaceRoot(workspace);
 
         WorkspaceRoot deserializedWorkspaceRoot =

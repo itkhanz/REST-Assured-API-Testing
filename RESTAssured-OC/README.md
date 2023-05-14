@@ -1026,10 +1026,55 @@ public void validate_response_body(){
 > Note: You need to have at least 1 team workspace in order to create another one. Sorry to disturb you.
 
 * Example solution for the assignment to serialize and deserialize the JSONPlaceholder API using POJO classes is
-  in `AssignmentPojoTest` where we created 3 nested pojo classes to pass the request and get response in POJO.
-* 
+  in `AssignmentPojoTest.class` where we created 3 nested pojo classes to pass the request and get response in POJO.
+```java
+    @Test
+    public void assignment_serialize_deserialize_test() {
+
+        Geo geo = new Geo("-37.3159", "81.1496");
+        Address address = new Address("Kulas Light","Apt. 556","Gwenborough","92998-3874", geo);
+        User user = new User("Leanne Graham","Bret","Sincere@april.biz", address);
+
+        User deserializedUser =
+                given()
+                        .body(user)
+                .when()
+                        .post("/users")
+                .then()
+                        .spec(responseSpecification)
+                        .extract().response().as(User.class);
+
+        assertThat(deserializedUser.getId(), not(is(emptyOrNullString())));
+    }
+```
 
 ### Jackson Annotations
+
+* Jackson also provides us with certain Annotations. We can set the annotation at class level or property level.
+* To ignore the unnecessary fields to be sent to server, these annotations are helpful.
+* **Not Null** `@JsonInclude(JsonInclude.Include.NON_NULL)` will ignore the null values from the request body POJO during serialization.
+* **Non Default** `@JsonInclude(JsonInclude.Include.NON_DEFAULT)` will ignore the integers as well which are not initialized. Since the default value for integer is
+  zero, and the default value for String is Null therefore this annotation will ignore both uninitialized integers and
+  string.
+* **Non Empty** , specifying only value as `JsonInclude.Include.NON_EMPTY` for a {link java.util.Map} would exclude Maps
+  with no values, but would include Maps with `null` values.
+* **JSON Ignore** `@JsonIgnore` is an alternative to `@JsonInclude` annotation. It will ignore the property entirely for serialization and deserialization.
+
+```java
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String i;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String id;
+    
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private HashMap<String, String> myHashMap;
+```
+
+* If we use `@JsonIgnore` for the ID property, it will ignore the ID field for both serialization and deserialization.
+* But we want ID to be ignored only during serialization, this can be done with another annotation `@JsonIgnoreProperties(value = "id", allowSetters = true)`
+* If we want the property during deserialization, we use `allowSetters`
+* If we want the property during serialization, we use `allowGetters`
 
 ### Complex POJO
 

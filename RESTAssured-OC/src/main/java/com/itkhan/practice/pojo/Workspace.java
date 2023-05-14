@@ -1,9 +1,18 @@
 package com.itkhan.practice.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.HashMap;
 
+
+@JsonIgnoreProperties(value = "id", allowSetters = true)
 public class Workspace {
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String i;
+
     private String id;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private HashMap<String, String> myHashMap;
     private String name;
     private String type;
@@ -27,6 +36,13 @@ public class Workspace {
         this.myHashMap = myHashMap;
     }
 
+    public String getI() {
+        return i;
+    }
+
+    public void setI(String i) {
+        this.i = i;
+    }
     public String getId() {
         return id;
     }
