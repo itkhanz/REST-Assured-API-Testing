@@ -948,6 +948,33 @@ public void validate_response_body(){
         given().
                 body(jsonListStr).
 ```
+* Apart from Hashmap and Jackson library for serialization, we can also use `POJO` (Plain Old Java Object).
+* POJO uses a parameterized constructor for setting values, and we can use getter methods to retrieve the private attributes of class.
+* It offers more readability, usability, easy access to data and type safety.
+* Lombok is a life saver here that can help to reduce the huge amount of code for getters and setters in POJO classes.
+* For simpler cases, POJO can be an overkill.
+* Create a POJO for `SimplePojo` and write a test case for serialization and deserialization in `SimplePojoTest`.
+* We will use the Jackson to fetch the complete body to write a complete match for whole JSON. This is how the
+  deserialization is achieved with jackson. Response can be extracted via `exctract().as(SimplePojo.class)` and save it
+  in a new object of the class.
+* `readTree()` method will assert for the entire JSON object i.e. entire response body.
+
+```java
+        SimplePojo simplePojo = new SimplePojo("value1", "value2");
+        SimplePojo deserializePojo =
+                given()
+                    .body(simplePojo)
+                .when()
+                    .post("/postSimplejson")
+                .then().spec(responseSpecification)
+                    .extract().response().as(SimplePojo.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String deserialzedPojoStr = objectMapper.writeValueAsString(deserializePojo);
+        String simplePojoStr = objectMapper.writeValueAsString(simplePojo);
+        assertThat(objectMapper.readTree(deserialzedPojoStr), equalTo(objectMapper.readTree(simplePojoStr)));
+```
+
 * 
 
 ### Jackson Annotations
