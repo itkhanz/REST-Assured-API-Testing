@@ -1339,6 +1339,10 @@ public void validate_response_body(){
 
 ### Coding Challenges
 
+#### Fetch all nested Keys and values from a given JSON Array
+
+#### Fetch values of fields with same key name
+
 ### Authentication and Authorization
 
 ### OAuth Flows

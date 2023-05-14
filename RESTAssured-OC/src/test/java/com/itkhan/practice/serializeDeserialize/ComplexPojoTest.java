@@ -26,7 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class ComplexPojoTest {
-    private static String API_KEY = "PMAK-6455f9b49325834e17608e53-7e10f5eff1dd8519c16f8ad74c0b03d9bc"; //generate your own Postman API key
+    private static String API_KEY = ""; //generate your own Postman API key
     private static String BASEURI = "https://api.postman.com";
 
     private static String WORKSPACE_ID = "f3c17300-836c-4a00-a16f-8bcaace3707e";
