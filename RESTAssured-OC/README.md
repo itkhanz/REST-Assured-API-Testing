@@ -54,6 +54,8 @@
   identified.
 * [GPath](https://docs.groovy-lang.org/latest/html/documentation/core-semantics.html#gpath_expressions) use a dot-object
   notation to perform object navigation.
+* [Groovy GPath in REST Assured – Part 2: GPath JSON](https://www.james-willett.com/rest-assured-gpath-json/)
+* [REST-assured with Groovy](https://www.baeldung.com/rest-assured-groovy)
 * Groovy Playground
     * http://groovyconsole.appspot.com/
     * https://www.jdoodle.com/execute-groovy-online/
@@ -1389,8 +1391,35 @@ public static List<String> allKeysList = new ArrayList<String>();
         }
     }
 ```
+
 #### Fetch values of fields with same key name
 
+* You can use GROOVY Playground to find the fields and then implement the same with REST Assured
+* `println(object.names.language.findAll{it.name}.name)`
+  * [ja-Hrkt, ko, fr, de, es, it, en]
+
+* `println(object.names.language.findAll{it.url}.url)`
+  * [https://pokeapi.co/api/v2/language/1/, https://pokeapi.co/api/v2/language/3/, https://pokeapi.co/api/v2/language/5/, https://pokeapi.co/api/v2/language/6/, https://pokeapi.co/api/v2/language/7/, https://pokeapi.co/api/v2/language/8/, https://pokeapi.co/api/v2/language/9/]
+
+* `println(object.names.name)`
+  * [金, 골드, Or, Gold, Oro, Oro, Gold]
+
+```java
+    @Test
+    public void exe4(){
+        File jsonFile=new File("src\\test\\java\\com\\itkhan\\practice\\codingChallenges\\assignment4.json");
+
+        JsonPath jsonPath=new JsonPath(jsonFile);
+        List<String> namesList=jsonPath.get("names.language.name");
+        System.out.println(namesList.toString());   //[ja-Hrkt, ko, fr, de, es, it, en]
+
+        List<String> urlList=jsonPath.get("names.language.url");
+        System.out.println(urlList.toString()); //[https://pokeapi.co/api/v2/language/1/, https://pokeapi.co/api/v2/language/3/, https://pokeapi.co/api/v2/language/5/, https://pokeapi.co/api/v2/language/6/, https://pokeapi.co/api/v2/language/7/, https://pokeapi.co/api/v2/language/8/, https://pokeapi.co/api/v2/language/9/]
+
+        List<String> langNamesList=jsonPath.get("names.name");
+        System.out.println(langNamesList.toString());   //[金, 골드, Or, Gold, Oro, Oro, Gold]
+        }
+```
 
 ### Authentication and Authorization
 

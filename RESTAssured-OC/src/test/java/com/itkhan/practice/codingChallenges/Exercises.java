@@ -3,6 +3,8 @@ package com.itkhan.practice.codingChallenges;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -57,6 +59,40 @@ public class Exercises {
                 allValuesList.add(entry.getValue());
             }
         }
+    }
+
+    @Test
+    public void exe4() {
+        File jsonFile = new File("src\\test\\java\\com\\itkhan\\practice\\codingChallenges\\assignment4.json");
+
+        JsonPath jsonPath = new JsonPath(jsonFile);
+        List<String> namesList = jsonPath.get("names.language.name");
+        System.out.println(namesList.toString());   //[ja-Hrkt, ko, fr, de, es, it, en]
+
+        List<String> urlList = jsonPath.get("names.language.url");
+        System.out.println(urlList.toString()); //[https://pokeapi.co/api/v2/language/1/, https://pokeapi.co/api/v2/language/3/, https://pokeapi.co/api/v2/language/5/, https://pokeapi.co/api/v2/language/6/, https://pokeapi.co/api/v2/language/7/, https://pokeapi.co/api/v2/language/8/, https://pokeapi.co/api/v2/language/9/]
+
+        List<String> langNamesList = jsonPath.get("names.name");
+        System.out.println(langNamesList.toString());   //[金, 골드, Or, Gold, Oro, Oro, Gold]
+
+        //Alternatively you can find it using groovy
+        /*import groovy.json.JsonSlurper
+
+        def object = new JsonSlurper().parseText(
+                '''
+        {INSERT_YOUR_JSON_HERE}
+        '''
+        )
+
+        println(object.names.language.findAll{it.name}.name)
+        //[ja-Hrkt, ko, fr, de, es, it, en]
+
+        println(object.names.language.findAll{it.url}.url)
+        //[https://pokeapi.co/api/v2/language/1/, https://pokeapi.co/api/v2/language/3/, https://pokeapi.co/api/v2/language/5/, https://pokeapi.co/api/v2/language/6/, https://pokeapi.co/api/v2/language/7/, https://pokeapi.co/api/v2/language/8/, https://pokeapi.co/api/v2/language/9/]
+
+        println(object.names.name)
+        //[金, 골드, Or, Gold, Oro, Oro, Gold]*/
+
     }
 
 
