@@ -1503,7 +1503,26 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 ### Google OAuth2.0 - Implicit Grant Flow and OpenID Connect
 
+* [OAuth 2.0 for Client-side Web Applications](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow)
+* There is no auth code involved in implicit grant flow, we get the access token directly from redirect url in browser.
+* Also, there is no refresh token in implicit flow.
+
+
+* [OpenID Connect Documentation](https://developers.google.com/identity/openid-connect/openid-connect)
+* The client application uses the ID token from OpenID Connect to authenticate the application.
+* ID token is most of the time `JWT Token`
+* [JWT Decoder](https://jwt.io/) Paste the ID token in decoder to read the information in token.
+* [JSON Web Tokens](https://auth0.com/docs/secure/tokens/json-web-tokens)
+* Three main components of a JWT Token
+  1. Header: Includes the type of the token and the signing algorithm
+  2. Payload: Includes claims. Claims are the statements about an identity that can be used by the server for validation purposes
+  3. Signature: Used to verify the token is not compromised/is not changed. Additionally, if the token is signed with a private key, the server can verify the sender of the token.
+  Note that the components are comma separated.
+
+
 ### Google OAuth2.0 - Automate
+
+
 
 ### Form Based Authentication
 
