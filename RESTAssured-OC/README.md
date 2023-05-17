@@ -1459,7 +1459,7 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 <img src="doc/Oauth-openID.png" alt="Oauth OpenID">
 
-* Oauth is used for authorization.
+* OpenID Connect is used for authentication while OAuth is used for authorization.
 * Oauth helps solve the problem of delegated authorization. It helps to authorize one application to get access to
   another application's resources.
 
@@ -1470,9 +1470,29 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 ### OAuth Flows
 
+<img src="doc/Oauth-terminologies.png" alt="">
 
+* Authorization server issues access token to the client application so it can access resource from the resource server.
+
+<img src="doc/Oauth-grant-flow.png" alt="">
+
+* `Authorization Grant Flow` is the most popular flow of OAuth.
+* Auth code, access token, refresh token are exchanged at the backend and hence it is the most secure way of delegated authorization.
+
+<img src="doc/Oauth-implicit-grant-flow.png" alt="">
+
+* In Implicit Grant Flow case, no Auth code is sent from Authorization server back to the client application.
+* It sends the access token directly to the client application at frontend layer and is stored in the browser.
+* Hence it is not much secure and access token is short lived.
+
+<img src="doc/Oauth-client-credentials-flow.png" alt="">
+
+* In Client credentials flow, there is no user involved. One service acts as a client, and the other as auth server.
+* This is typically used in microservices architecture where services are authorized to access other services.
 
 ### Google OAuth2.0
+
+* 
 
 ### Google OAuth2.0 - Implicit Grant Flow and OpenID Connect
 
