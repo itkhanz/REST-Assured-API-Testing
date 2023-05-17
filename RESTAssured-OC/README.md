@@ -1492,7 +1492,14 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 ### Google OAuth2.0
 
-* 
+<img src="doc/oauth-plan.png" alt="Google Oauth2.0 plan">
+
+* [Google OAuth2.0 documentation](https://developers.google.com/identity/protocols/oauth2)
+* [OAuth 2.0 Playground](https://developers.google.com/oauthplayground/)
+* we will use GMAIL API v1
+* [GMAIL API](https://developers.google.com/gmail/api/reference/rest)
+* [Encode to base64](https://ostermiller.org/calc/encode.html)
+
 
 ### Google OAuth2.0 - Implicit Grant Flow and OpenID Connect
 
