@@ -1423,7 +1423,54 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 ### Authentication and Authorization
 
+* **Authentication** -> who you are. proves your identity
+* **Authorization** -> What you can do. Proves your right to access.
+* HTTP Authentication Schemes:
+  * Basic
+  * Bearer
+  * Digest
+  * OAuth
+
+* You can practice the authentication schemes with Postman Echo API by choosing the appropriate authentication type.
+<img src="doc/auth-basic.png" alt="basic authentication">
+
+<img src="doc/postman-auth.png" alt="Postman Authorization types">
+
+* This how you can encode and decode with Base64 in REST Assured Java.
+
+```java
+        String usernameColonPassword = "myUsername:myPassword";
+
+        String base64Encoded = Base64.getEncoder().encodeToString(usernameColonPassword.getBytes());
+        System.out.println("Encoded = " + base64Encoded);
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Encoded);
+        System.out.println("Decoded = " + new String(decodedBytes));
+```
+
+
+<img src="doc/auth-digest.png" alt="digest authentication">
+
+
+<img src="doc/auth-bearer.png" alt="bearer authentication"> 
+
+
+<img src="doc/auth-APIkey.png" alt="API Key authentication">
+
+
+<img src="doc/Oauth-openID.png" alt="Oauth OpenID">
+
+* Oauth is used for authorization.
+* Oauth helps solve the problem of delegated authorization. It helps to authorize one application to get access to
+  another application's resources.
+
+<img src="doc/Oauth-delegated-authorization.png" alt="delegated authorization">
+
+* `OpenID Connect` is created later as a layer to support authentication with OAuth. It gives us the possibility to
+  authenticate ourselves by signing up with Google/facebook account into another application.
+
 ### OAuth Flows
+
+
 
 ### Google OAuth2.0
 
