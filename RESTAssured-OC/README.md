@@ -1628,6 +1628,7 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
         System.out.println("Session id = " + filter.getSessionId());
 
+        //We pass Session information in subsequent requests which automatically sends the sesion information
         given().
                 sessionId(filter.getSessionId()).
                 log().all().
@@ -1643,10 +1644,84 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 ### Handling Cookies
 
-
-
 <img src="doc/cookie.png" alt="HTTP Cookie">
 
+* [REST Assured Cookie](https://github.com/rest-assured/rest-assured/wiki/Usage#cookies)
+* Application uses Session ID to maintain the user state, and session ID is sent by the server back to client in the form of a cookie.
+* In the devTools, application tab can be opened to see the cookies.
+* Cookies are sent as part of header information in request and response.
+* Instead of using `SessionFilter`, we can also send cookie as part of subsequent requests for authentication.
+* We can also send Cookie using `Cookie Builder` as well as have option to send multiple cookies using `Cookies()`
+* 
+```java
+        Cookie cookie = new Cookie.Builder("JSESSIONID", filter.getSessionId()).setSecured(true)
+                .setHttpOnly(true).setComment("my cookie").build();
+        Cookie cookie1 = new Cookie.Builder("dummy", "dummyValue").build();
+
+        Cookies cookies = new Cookies(cookie, cookie1);
+
+        given().
+    //            cookie("JSESSIONID", filter.getSessionId()).
+    //            cookie(cookie).
+                cookies(cookies).
+                log().all().
+        when().
+                get("/profile/index").
+```
+* [REST Assured Detailed Cookie](https://github.com/rest-assured/rest-assured/wiki/Usage#detailed-cookies)
+* If you need to get e.g. the comment, path or expiry date etc from a cookie you need get a detailed cookie from REST Assured.
+```java
+        Response response = given().
+                log().all().
+        when().
+                get("/profile/index").
+        then().
+                log().all().
+                assertThat().
+                statusCode(200).
+                extract().
+                response();
+
+        System.out.println(response.getCookie("JSESSIONID"));
+        System.out.println(response.getDetailedCookie("JSESSIONID"));
+```
+
+* To get all values for a cookie you need to first get the Cookies object from the Response object. From the `Cookies`
+  instance you can get all values using the `Cookies.getValues()` method which returns a List with all cookie values.
+
+```java
+  // Get all cookies as simple name-value pairs
+  Map<String, String> allCookies = response.getCookies();
+  // Get a single cookie value:
+  String cookieValue = response.getCookie("cookieName");
+```
+
+```java
+    Response response = given().
+                log().all().
+        when().
+                get("/profile/index").
+        then().
+                log().all().
+                assertThat().
+                statusCode(200).
+                extract().
+                response();
+
+        Map<String, String> cookies = response.getCookies();
+
+        for(Map.Entry<String, String> entry: cookies.entrySet()){
+            System.out.println("cookie name = " + entry.getKey());
+            System.out.println("cookie value = " + entry.getValue());
+        }
+
+        Cookies cookies1 = response.getDetailedCookies();
+        List<Cookie> cookieList = cookies1.asList();
+
+        for(Cookie cookie: cookieList){
+            System.out.println("cookie = " + cookie.toString());
+        }
+```
 ---
 
 ## Framework
