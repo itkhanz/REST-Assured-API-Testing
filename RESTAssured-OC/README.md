@@ -1522,7 +1522,74 @@ public static List<String> allKeysList = new ArrayList<String>();
 
 ### Google OAuth2.0 - Automate
 
+* Example code snippets for this section can be found in `GmailApi.java` class in `practice.google.OAuth2` package.
+* We cannot automate the flow to produce the access token. 
+* Because we need to go to the URL for Authorization in browser, and login manually and then copy the access token from
+  the query parameter in redirect URL. Google adds blocker for the automation of login.
+* After authorization, you can use the getToken API to send the authorization code as request body to get the access
+  token and refresh token. We can automate this part but since the authorization code is short lived and must be
+  retrieved manually, it is not recommended.
+* So we automate only the GMAIL API with access token.
+* Get the access token via Postman and add it as Authorization Bearer header.
 
+#### getUserProfile
+* [getProfile Documentation](https://developers.google.com/gmail/api/reference/rest/v1/users/getProfile)
+```java
+    @Test
+    public void getUserProfile() {
+        given()
+                .spec(requestSpecification)
+                .basePath("/gmail/v1")
+                .pathParam("userid", "test@gmail.com")
+        .when()
+                .get("/users/{userid}/profile")
+        .then()
+                .spec(responseSpecification)
+        ;
+    }
+```
+
+#### sendMessage
+* [users.messages.send API Documentation](https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send)
+* We need to send the entire email message using RFC 2822 formatted and encoded base64 url String.
+```java
+    @Test
+    public void sendMessage() {
+        String msg = "From: test@gmail.com\n" +
+                "To: example@gmail.com\n" +
+                "Subject: Test Email\n" +
+                "\n" +
+                "Sending from Gmail API";
+
+        String base64UrlEncodedMsg = Base64.getUrlEncoder().encodeToString(msg.getBytes());
+
+        HashMap<String, String> payload = new HashMap<>();
+        payload.put("raw", base64UrlEncodedMsg);
+
+        given()
+                .spec(requestSpecification)
+                .basePath("/gmail/v1")
+                .pathParam("userid", "test@gmail.com")
+                .body(payload)
+        .when()
+                .post("/users/{userid}/messages/send")
+        .then()
+                .spec(responseSpecification)
+                .assertThat()
+                .body("labelIds", hasItem("SENT"))
+        ;
+    }
+```
+
+* Now go ahead and automate more of Gmail APIs. Here's the list: Delete, Get, List and Modify.
+
+Automate any two of these. If you automate all four, you will become a ninja :-)
+* Delete: https://developers.google.com/gmail/api/reference/rest/v1/users.messages/delete
+* Get: https://developers.google.com/gmail/api/reference/rest/v1/users.messages/get
+* List: https://developers.google.com/gmail/api/reference/rest/v1/users.messages/list
+* Modify: https://developers.google.com/gmail/api/reference/rest/v1/users.messages/modify
+
+* Solution to assignment is also completed in `GmailApi.java` class.
 
 ### Form Based Authentication
 
