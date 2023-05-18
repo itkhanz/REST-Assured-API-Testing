@@ -1593,7 +1593,59 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 ### Form Based Authentication
 
+<img src="doc/session-auth.png" alt="Session based authentication">
+
+* [REST Assured Form Authentication Wiki](https://github.com/rest-assured/rest-assured/wiki/Usage#form-authentication)
+* [REST Assured CSRF](https://github.com/rest-assured/rest-assured/wiki/Usage#csrf)
+* [Demo App](https://github.com/dangeabunea/RomanianCoderExamples)
+* Download and Unzip.
+* Navigate to `SpringBootSecurity` and then to `Forms` project
+* This application will use port 8081 so make sure this port is not being used by some other application.
+* Open CMD and navigate to project root directory and execute with `mvnw.cmd clean install`
+* Copy and paste the certificate to `Forms/target/src/main/resources/bootsecurity.p12`
+* Navigate to target folder and execute the `java -jar <FILENAME>`
+* Now open the URL in browser `https://localhost:8081`
+
+```java
+@Test
+    public void form_authentication_using_csrf_token(){
+
+        // /signin is a POST call.
+        // /login is a GET call that gives us the login form which has the csrf token. So we are telling Rest Assured to find the csrf there.
+
+        SessionFilter filter = new SessionFilter();
+        given().
+                csrf("/login").
+                auth().form("dan", "dan123", new FormAuthConfig("/signin", "txtUsername", "txtPassword")).
+                filter(filter).
+                log().all().
+        when().
+                get("/login").
+        then().
+                log().all().
+                assertThat().
+                statusCode(200);
+
+        System.out.println("Session id = " + filter.getSessionId());
+
+        given().
+                sessionId(filter.getSessionId()).
+                log().all().
+        when().
+                get("/profile/index").
+        then().
+                log().all().
+                assertThat().
+                statusCode(200).
+                body("html.body.div.p", equalTo("This is User Profile\\Index. Only authenticated people can see this"));
+    }
+```
+
 ### Handling Cookies
+
+
+
+<img src="doc/cookie.png" alt="HTTP Cookie">
 
 ---
 

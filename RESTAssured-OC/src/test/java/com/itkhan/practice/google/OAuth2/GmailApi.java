@@ -22,7 +22,7 @@ public class GmailApi {
     RequestSpecification requestSpecification;
     ResponseSpecification responseSpecification;
     private static String access_token = "";    //get access token via Postman
-    
+
     @BeforeClass
     public void beforeClass() {
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder()
