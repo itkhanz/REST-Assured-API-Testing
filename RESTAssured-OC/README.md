@@ -1728,5 +1728,52 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 <img src="doc/framework-design-project-structure.png" alt="framework design and project structure">
 
+<img src="doc/spotify-automation.png" alt="spotify automation">
+
+### Framework - Spotify OAuth2.0
+
+* [Spotify for Developers](https://developer.spotify.com/)
+* [Spotify Web API](https://developer.spotify.com/documentation/web-api)
+* 
+
+### Framework - Automate Tests
+
+
+### Framework - Create POJOs
+
+
+### Framework - Create Reusable methods
+
+
+### Framework - Token Manager
+
+
+### Framework - Routes
+
+
+### Framework - Property Loaders
+
+
+### Framework - Test Class Refactoring
+
+
+### Framework - Lombok
+
+
+### Framework - Allure Reporting
+
+
+### Framework - Maven Command Line
+
+
+### Framework - Important Optimizations
+
+
+### Framework - Integration with GitHub
+
+
+### Framework - CI
+
+
 
 
