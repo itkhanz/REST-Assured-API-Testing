@@ -1734,7 +1734,66 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 * [Spotify for Developers](https://developer.spotify.com/)
 * [Spotify Web API](https://developer.spotify.com/documentation/web-api)
-* 
+* [Authorization](https://developer.spotify.com/documentation/web-api/concepts/authorization)
+* [Scope](https://developer.spotify.com/documentation/web-api/concepts/scopes)
+* [Authorization Code Flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
+* [Get Playlist API](https://developer.spotify.com/documentation/web-api/reference/get-playlist)
+* [Change Playlist Details API](https://developer.spotify.com/documentation/web-api/reference/change-playlist-details)
+* [Create Playlist](https://developer.spotify.com/documentation/web-api/reference/create-playlist)
+
+* First we need to register our client application to generate client_id and client_secret.
+* Login to the Spotify and choose `CREATE AN APP` in [Dashboard](https://developer.spotify.com/dashboard) and note down the client secret and client id
+* The redirect URL is set to https://localhost:8080
+* [Authorization Code Grant Flow tutorial documentation](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
+* Navigate to authorization code grant flow and make `GET` request to `/authorize` endpoint at the baseURL `https://accounts.spotify.com`
+* To generate the **Authorization code** use the below link and paste in the browser to get the authorization code.
+`https://accounts.spotify.com/authorize?client_id=<provide_client_id>&response_type=code&redirect_uri=https://www.google.com/&scope=playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public&state=34fFs29kd09`
+* To generate the Token use the below url.
+`https://accounts.spotify.com/api/token`
+* Scope should be space separated list of `playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public`
+* Now we need to copy paste the URL into browser and give permission to copy auth code from query param in redirect url.
+
+<img src="doc/spotify-authorize-postman.png">
+<img src="doc/spotify-authorize-browser.png">
+
+* Now we can use this code to get the access token and refresh token.
+* If the user accepted your request, then your app is ready to exchange the authorization code for an Access Token. It can do this by making a POST request to the `/api/token` endpoint. 
+* The body of this POST request must contain the following parameters encoded in `application/x-www-form-urlencoded`
+* As long as we are logged in, we can use the refresh token to generate new access token.
+
+<img src="doc/spotify-getToken-postman.png">
+
+<img src="doc/spotify-renewToken-postman.png">
+
+* Now [Create Playlist](https://developer.spotify.com/documentation/web-api/reference/create-playlist) using the access token generated previously.
+* We need userID to send as a path parameter which can be retrieved by making GET call to [Get Current User Profile](https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile)
+* we create a playlist with sample body:
+```json
+{
+    "name": "New Playlist",
+    "description": "New playlist description",
+    "public": false
+}
+```
+<img src="doc/spotify-createPlaylist-postman.png">
+
+* Now we [Get Playlist](https://developer.spotify.com/documentation/web-api/reference/get-playlist) by  making a `GET` call to the endpoint.
+*The playlist ID can be retrieved from the previous call to Create Playlist response body.
+
+<img src="doc/spotify-getPlaylist-postman.png">
+
+* Now [Change Playlist Details](https://developer.spotify.com/documentation/web-api/reference/change-playlist-details) by making a `PUT` call to the endpoint.
+* we create a playlist with sample body:
+```json
+{
+    "name": "New Playlist",
+    "description": "New playlist description",
+    "public": false
+}
+```
+
+<img src="doc/spotify-updatePlaylist-postman.png">
+
 
 ### Framework - Automate Tests
 
