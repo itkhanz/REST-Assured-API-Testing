@@ -1797,9 +1797,102 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 ### Framework - Automate Tests
 
+* We create the resusable request and response spec builders:
+```java
+    @BeforeClass
+    public void beforeClass() {
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder()
+                .setBaseUri("https://api.spotify.com")
+                .setBasePath("/v1")
+                .addHeader("Authorization", "Bearer " + access_token)
+                .setContentType(ContentType.JSON)
+                .log(LogDetail.ALL);
+        requestSpecification = requestSpecBuilder.build();
+
+        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder()
+                .expectContentType(ContentType.JSON)
+                .log(LogDetail.ALL);
+        responseSpecification = responseSpecBuilder.build();
+    }
+```
+
+#### Automate - Create a Playlist API
+
+```java
+    @Test
+    public void shouldBeAbleToCreateAPlaylist() {
+        String payload = "{\n" +
+                "    \"name\": \"New Playlist\",\n" +
+                "    \"description\": \"New playlist description\",\n" +
+                "    \"public\": false\n" +
+                "}";
+
+        given(requestSpecification)
+                .pathParam("userid", "31ere62g3sbz2lsr27qcc5w4fsae")
+                .body(payload)
+        .when()
+                .post("/users/{userid}/playlists")
+        .then().spec(responseSpecification)
+                .assertThat()
+                .statusCode(201)
+                .body("name", equalTo("New Playlist"),
+                        "description", equalTo("New playlist description"),
+                        "public",equalTo(false)
+                );
+    }
+```
+
+#### Automate - Get a Playlist API
+
+```java
+    @Test
+    public void shouldBeAbleToGetAPlaylist() {
+
+        given(requestSpecification)
+                .pathParam("playlist_id", "3sjJgjSUDIXQNggx0SdnKY")
+        .when()
+                .get("/playlists/{playlist_id}")
+        .then().spec(responseSpecification)
+                .assertThat()
+                .statusCode(200)
+                .body("name", equalTo("New Playlist"),
+                        "description", equalTo("New playlist description"),
+                        "public",equalTo(false)
+                );
+    }
+```
+
+#### Automate - Update a Playlist API
+
+```java
+    @Test
+    public void shouldBeAbleToUpdateAPlaylist() {
+        String payload = "{\n" +
+                "    \"name\": \"Updated Playlist Name\",\n" +
+                "    \"description\": \"Updated playlist description\",\n" +
+                "    \"public\": false\n" +
+                "}";
+
+        given(requestSpecification)
+                .pathParam("playlist_id", "3sjJgjSUDIXQNggx0SdnKY")
+                .body(payload)
+        .when()
+                .put("/playlists/{playlist_id}")
+        .then().spec(responseSpecification)
+                .assertThat()
+                .statusCode(200)
+                ;
+    }
+```
+
+#### Automate - Negative Scenarios
+
+* try to create a playlist without name -> should get status code 400 bad request
+* try to create playlist with expired access token -> should get status code 401 unauthorized
 
 ### Framework - Create POJOs
 
+* 
 
 ### Framework - Create Reusable methods
 
