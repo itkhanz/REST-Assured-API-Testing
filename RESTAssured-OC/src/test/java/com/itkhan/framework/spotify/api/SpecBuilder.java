@@ -8,12 +8,14 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 
+import static com.itkhan.framework.spotify.api.TokenManager.getToken;
 import static io.restassured.RestAssured.config;
 
 /*generic Request and Response Specifications for the Spotify API */
 public class SpecBuilder {
-    static String access_token = "";
-    
+    static String access_token = getToken();
+
+    /*Authorization Header is configured to be overwritten because for negative scenarios we need to pass the different access_token than default */
     public static RequestSpecification getRequestSpec() {
         return new RequestSpecBuilder()
                 .setBaseUri("https://api.spotify.com")
@@ -22,6 +24,16 @@ public class SpecBuilder {
                 .setContentType(ContentType.JSON)
                 .build()
                 .config(config().headerConfig(HeaderConfig.headerConfig().overwriteHeadersWithName("Authorization")))
+                ;
+    }
+
+    /* API calls such as for renewal of access_token has different baseURL so need separate RequestSpec*/
+    public static RequestSpecification getAccountRequestSpec() {
+        return new RequestSpecBuilder()
+                .setBaseUri("https://accounts.spotify.com")
+                .setContentType(ContentType.URLENC)
+                .log(LogDetail.ALL)
+                .build()
                 ;
     }
 

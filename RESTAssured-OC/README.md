@@ -2108,12 +2108,91 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
     }
 ```
 
-* With the reusable methods from `RestResource` class, we can now use these methods acrosss different APIs from Spotify
+* With the reusable methods from `RestResource` class, we can now use these methods across different APIs from Spotify
   by just creating a separate class for each API and calling reusable methods from `RestResource` with complete path of
   API.
+* So now we have two layers of abstraction for the API Calls i.e. firs the Playlist API, and then generic spec from RestResource.
 
 ### Framework - Token Manager
 
+* We should be able to renew the access token automatically before making the API request if it is expired.
+* Create a `TokenManager` class and implement method to `getToken` and `renewToken` if the access token is expired.
+* We need to make POST call with urlencoded form parameters as RestAssured Hashmap.
+* The baseUrl (accounts.spotify.com) is different for this API than the other APIs so we cannot use the specBuilder for request Specification.
+```java
+        public static String renewToken() {
+        HashMap<String, String> formParams = new HashMap<String, String>();
+        formParams.put("client_id", "xxx");
+        formParams.put("client_secret", "xxx");
+        formParams.put("refresh_token", "xxx");
+        formParams.put("grant_type", "refresh_token");
+
+        Response response = given()
+                                .baseUri("https://accounts.spotify.com")
+                                .contentType(ContentType.URLENC)
+                                .formParams(formParams)
+                            .when()
+                                .post("/api/token")
+                            .then()
+                                .spec(getResponseSpec())
+                                .extract().response()
+                ;
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("ABORT!!! Renew Access Token failed");
+        }
+        return response.path("access_token");
+    }
+```
+* We can call this static method in `SpecBuiilder` to renew the access token before making API call.
+* But this call is redundant in every API call and we only want to make this API call to renew access_token if the current token is expired.
+```java
+    public static String getToken() {
+        try {
+            if (access_token == null || Instant.now().isAfter(expiry_time)) {
+                System.out.println("Renewing token.....");
+                Response response = renewToken();
+                access_token = response.path("access_token");
+                int expiryDurationInSeconds = response.path("expires_in");
+                expiry_time = Instant.now().plusSeconds(expiryDurationInSeconds - 300); //add a buffer of 300 seconds before actual expiry duration
+            } else {
+                System.out.println("Token is good to use");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("ABORT!!! Failed to get token");
+        }
+        return access_token;
+    }
+```
+* For the `renewToken()` method inside `TokenManager`, we need to abstract the API call inside `RestResource` so we can reuse it.
+* This also follows our design principle that all the API calls should be abstracted and reusable.
+```java
+    public static Response postAccount(HashMap<String, String> formParams) {
+        return given()
+                    .baseUri("https://accounts.spotify.com")
+                    .contentType(ContentType.URLENC)
+                    .formParams(formParams)
+                    .log().all()
+                .when()
+                    .post("/api/token")
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
+```
+* We will create a request specification for `postAccount` that can be reusable for this baseUri https://accounts.spotify.com.
+```java
+    public static RequestSpecification getAccountRequestSpec() {
+        return new RequestSpecBuilder()
+                .setBaseUri("https://accounts.spotify.com")
+                .setContentType(ContentType.URLENC)
+                .log(LogDetail.ALL)
+                .build()
+                ;
+    }
+```
+* 
 
 ### Framework - Routes
 
