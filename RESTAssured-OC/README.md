@@ -2111,14 +2111,17 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
 * With the reusable methods from `RestResource` class, we can now use these methods across different APIs from Spotify
   by just creating a separate class for each API and calling reusable methods from `RestResource` with complete path of
   API.
-* So now we have two layers of abstraction for the API Calls i.e. firs the Playlist API, and then generic spec from RestResource.
+* So now we have two layers of abstraction for the API Calls i.e. firs the Playlist API, and then generic spec from
+  RestResource.
 
 ### Framework - Token Manager
 
 * We should be able to renew the access token automatically before making the API request if it is expired.
 * Create a `TokenManager` class and implement method to `getToken` and `renewToken` if the access token is expired.
 * We need to make POST call with urlencoded form parameters as RestAssured Hashmap.
-* The baseUrl (accounts.spotify.com) is different for this API than the other APIs so we cannot use the specBuilder for request Specification.
+* The baseUrl (accounts.spotify.com) is different for this API than the other APIs so we cannot use the specBuilder for
+  request Specification.
+
 ```java
         public static String renewToken() {
         HashMap<String, String> formParams = new HashMap<String, String>();
@@ -2145,7 +2148,9 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
     }
 ```
 * We can call this static method in `SpecBuiilder` to renew the access token before making API call.
-* But this call is redundant in every API call and we only want to make this API call to renew access_token if the current token is expired.
+* But this call is redundant in every API call and we only want to make this API call to renew access_token if the
+  current token is expired.
+
 ```java
     public static String getToken() {
         try {
@@ -2164,7 +2169,9 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
         return access_token;
     }
 ```
-* For the `renewToken()` method inside `TokenManager`, we need to abstract the API call inside `RestResource` so we can reuse it.
+
+* For the `renewToken()` method inside `TokenManager`, we need to abstract the API call inside `RestResource` so we can
+  reuse it.
 * This also follows our design principle that all the API calls should be abstracted and reusable.
 ```java
     public static Response postAccount(HashMap<String, String> formParams) {
@@ -2195,7 +2202,8 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
 
 ### Framework - Routes
 
-* We define endPoints for our API Calls in a separate class `Route` so we can reuse them in all the API calls and remove duplication.
+* We define endPoints for our API Calls in a separate class `Route` so we can reuse them in all the API calls and remove
+  duplication.
 * We create them as constants using `final` keyword.
 ```java
 public class Route {
@@ -2210,7 +2218,50 @@ public class Route {
 
 ### Framework - Property Loaders
 
-* 
+* create a `PropertyUtility` to load configuration property files.
+* Move all the global properties such as client_id, client_secret, and user_id etc. to `config.properties` file in `src/test/resources` and load
+  them from there using property loader utility method `propertyLoader` created.
+* We will create a singleton class `ConfigLoader` to make sure that properties are loaded only once.
+* To create a singleton class:
+  * create a private static class variable of type `ConfigLoader` that represents object of this class
+  * Initialize a private constructor of this class because we do not want this class to be called outside of it. In
+    here, we load the properties file using PropertyUtils
+  * Create a `getInstance` method of type `ConfigLoader` that checks if the object of this class is already created and
+    then initializes and returns the new object of this class if it not already created.
+  * This ensures only one single object of this class is created. This also ensures we are not loading `config.properties` again and again.
+  * Now create public methods to get the individual properties.
+* Now in the `TokenManager` class, we can retrieve the properties as `ConfigLoader.getInstance().getClientId()`
+* Create `data.properties` file and remove the hard-coded playlist IDs for GET and UPDATE Playlist Tests.
+* Create a separate `DataLoader` similar to the `ConfigLoader` on base of singleton pattern to load the properties file just once.
+* For maintaining the test data, its recommended to use a JSON file or obtain the test data from database before executing tests.
+* Later, we will use Faker API to generate fake random invalid API token at runtime.
+
+* Below code snippet shows Singleton pattern implemented for DataLoader class.
+```java
+    public class DataLoader {
+    private final Properties properties;
+    private static DataLoader dataLoader;
+
+    private DataLoader(){
+        properties = PropertyUtils.propertyLoader("src/test/resources/data.properties");
+    }
+
+    public static DataLoader getInstance(){
+        if(dataLoader == null){
+            dataLoader = new DataLoader();
+        }
+        return dataLoader;
+    }
+
+    public String getGetPlaylistId(){
+        return Objects.requireNonNull(properties.getProperty("get_playlist_id"), "property get_playlist_id is not specified in the data.properties file");
+    }
+
+    public String getUpdatePlaylistId(){
+        return Objects.requireNonNull(properties.getProperty("update_playlist_id"), "property update_playlist_id is not specified in the data.properties file");
+    }
+}
+```
 
 ### Framework - Test Class Refactoring
 

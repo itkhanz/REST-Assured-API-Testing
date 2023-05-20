@@ -3,6 +3,7 @@ package com.itkhan.framework.spotify.tests;
 import com.itkhan.framework.spotify.api.applicationApi.PlaylistApi;
 import com.itkhan.framework.spotify.pojo.Error;
 import com.itkhan.framework.spotify.pojo.Playlist;
+import com.itkhan.framework.spotify.utils.DataLoader;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
@@ -41,7 +42,7 @@ public class PlaylistTests {
      */
     @Test
     public void shouldBeAbleToGetAPlaylist() {
-        Response response = PlaylistApi.get("6794ECQRd7OBRkcpMyyo40");
+        Response response = PlaylistApi.get(DataLoader.getInstance().getGetPlaylistId());
         assertThat(response.statusCode(),equalTo(200));
 
         Playlist responsePlaylist = response.as(Playlist.class);
@@ -63,7 +64,7 @@ public class PlaylistTests {
                 .setPublic(false)
                 ;
 
-        Response response = PlaylistApi.update("3sjJgjSUDIXQNggx0SdnKY", requestPlaylist);
+        Response response = PlaylistApi.update(DataLoader.getInstance().getUpdatePlaylistId(), requestPlaylist);
         assertThat(response.statusCode(),equalTo(200));
     }
 

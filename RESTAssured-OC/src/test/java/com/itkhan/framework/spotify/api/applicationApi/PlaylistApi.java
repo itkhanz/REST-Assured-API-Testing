@@ -2,6 +2,7 @@ package com.itkhan.framework.spotify.api.applicationApi;
 
 import com.itkhan.framework.spotify.api.RestResource;
 import com.itkhan.framework.spotify.pojo.Playlist;
+import com.itkhan.framework.spotify.utils.ConfigLoader;
 import io.restassured.response.Response;
 
 import static com.itkhan.framework.spotify.api.Route.PLAYLISTS;
@@ -15,7 +16,7 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response post(Playlist requestPlaylist) {
-        String user_id = "31ere62g3sbz2lsr27qcc5w4fsae";
+        String user_id = ConfigLoader.getInstance().getUser();
         String path = USERS + "/" + user_id + PLAYLISTS;
         return RestResource.post(path, requestPlaylist);
     }
@@ -28,7 +29,7 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response post(Playlist requestPlaylist, String accessToken) {
-        String user_id = "31ere62g3sbz2lsr27qcc5w4fsae";
+        String user_id = ConfigLoader.getInstance().getUser();
         String path = USERS + "/" + user_id + PLAYLISTS;
         return RestResource.post(path, requestPlaylist, accessToken);
     }
