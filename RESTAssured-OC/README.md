@@ -2029,7 +2029,88 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
     }
 ```
 
+* Now that we have abstracted the Playlist API methods from our tests, we know that these methods are only specific to
+  the playlist API because the paths defined in HTTP methods post() get() put() are for Playlist API.
+* We need to reuse these methods for different APIs for example Album Api, Artist Api and we also need reusable method for specific APIs.
+* We will abstract the methods inside `PlaylistApi` so they can be reused across all the APIs.
+* Create the `RestResource` class under `api` package which will contain the reusable methods for all the APIs
+```java
+    public class RestResource {
+    /**
+     * This method makes a POST request to Spotify API
+     * @param path complete Path or endpoint of the API excluding baseURL
+     * @param requestPlaylist POJO Object
+     * @return Response object from the REST Assured
+     */
+    public static Response post(String path, Object requestPlaylist) {
+        return given(getRequestSpec())
+                    .body(requestPlaylist)
+                .when()
+                    .post(path)
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
 
+
+    /**
+     * This method makes a GET request to the Spotify API
+     * @param path complete Path or endpoint of the API excluding baseURL
+     * @return Response object from the REST Assured
+     */
+    public static Response get(String path) {
+        return given(getRequestSpec())
+                .when()
+                    .get(path)
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
+
+    /**
+     * This method makes a PUT request to the Spotify API
+     * @param path complete Path or endpoint of the API excluding baseURL
+     * @param requestPlaylist POJO Object
+     * @return Response object from the REST Assured
+     */
+    public static Response update(String path, Object requestPlaylist) {
+        return given(getRequestSpec())
+                    .body(requestPlaylist)
+                .when()
+                    .put(path)
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
+}
+```
+* Now we can go to the `PlaylistApi` method for reusable methods for Playlist API and call our reusable methods from t he `RestResource`
+* And we can refactor the `PlaylistApi.post()` method by calling the `RestResource.post()` method inside it with complete path of Playlist API.
+```java
+    public static Response post(Playlist requestPlaylist) {
+        String user_id = "31ere62g3sbz2lsr27qcc5w4fsae";
+        String path = "/users/" + user_id + "/playlists";
+        return RestResource.post(path, requestPlaylist);
+        
+        /*return given(getRequestSpec())
+                    .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
+                    .body(requestPlaylist)
+                .when()
+                    .post("/users/{user_id}/playlists")
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+        */
+    }
+```
+
+* With the reusable methods from `RestResource` class, we can now use these methods acrosss different APIs from Spotify
+  by just creating a separate class for each API and calling reusable methods from `RestResource` with complete path of
+  API.
 
 ### Framework - Token Manager
 

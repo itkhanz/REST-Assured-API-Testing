@@ -1,5 +1,6 @@
 package com.itkhan.framework.spotify.api.applicationApi;
 
+import com.itkhan.framework.spotify.api.RestResource;
 import com.itkhan.framework.spotify.pojo.Playlist;
 import io.restassured.response.Response;
 
@@ -7,6 +8,7 @@ import static com.itkhan.framework.spotify.api.SpecBuilder.getRequestSpec;
 import static com.itkhan.framework.spotify.api.SpecBuilder.getResponseSpec;
 import static io.restassured.RestAssured.given;
 
+/*Reusable methods for Spotify Playlist API */
 public class PlaylistApi {
     /**
      * This method makes a POST request to Spotify Playlist API for creating Playlist
@@ -14,7 +16,11 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response post(Playlist requestPlaylist) {
-        return given(getRequestSpec())
+        String user_id = "31ere62g3sbz2lsr27qcc5w4fsae";
+        String path = "/users/" + user_id + "/playlists";
+        return RestResource.post(path, requestPlaylist);
+
+        /*return given(getRequestSpec())
                     .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
                     .body(requestPlaylist)
                 .when()
@@ -23,6 +29,7 @@ public class PlaylistApi {
                     .spec(getResponseSpec())
                     .extract().response()
                 ;
+        */
     }
 
     /**
@@ -33,7 +40,12 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response post(Playlist requestPlaylist, String accessToken) {
-        return given(getRequestSpec().header("Authorization", "Bearer " + accessToken))
+
+        String user_id = "31ere62g3sbz2lsr27qcc5w4fsae";
+        String path = "/users/" + user_id + "/playlists";
+        return RestResource.post(path, requestPlaylist, accessToken);
+
+        /*return given(getRequestSpec().header("Authorization", "Bearer " + accessToken))
                     .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
                     .body(requestPlaylist)
                 .when()
@@ -41,7 +53,7 @@ public class PlaylistApi {
                 .then()
                     .spec(getResponseSpec())
                     .extract().response()
-                ;
+        ;*/
     }
 
     /**
@@ -50,14 +62,17 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response get(String playlist_id) {
-        return given(getRequestSpec())
+        String path = "/playlists/" + playlist_id;
+        return RestResource.get(path);
+
+        /*return given(getRequestSpec())
                     .pathParam("playlist_id", playlist_id)
                 .when()
                     .get("/playlists/{playlist_id}")
                 .then()
                     .spec(getResponseSpec())
                     .extract().response()
-                ;
+        ;*/
     }
 
     /**
@@ -67,7 +82,10 @@ public class PlaylistApi {
      * @return Response object from the REST Assured
      */
     public static Response update(String playlist_id, Playlist requestPlaylist) {
-        return given(getRequestSpec())
+        String path = "/playlists/" + playlist_id;
+        return  RestResource.update(path, requestPlaylist);
+
+        /*return given(getRequestSpec())
                     .pathParam("playlist_id", playlist_id)
                     .body(requestPlaylist)
                 .when()
@@ -75,6 +93,6 @@ public class PlaylistApi {
                 .then()
                     .spec(getResponseSpec())
                     .extract().response()
-                ;
+        ;*/
     }
 }

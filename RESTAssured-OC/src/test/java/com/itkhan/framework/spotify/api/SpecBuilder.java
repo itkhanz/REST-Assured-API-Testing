@@ -13,6 +13,7 @@ import static io.restassured.RestAssured.config;
 /*generic Request and Response Specifications for the Spotify API */
 public class SpecBuilder {
     static String access_token = "";
+    
     public static RequestSpecification getRequestSpec() {
         return new RequestSpecBuilder()
                 .setBaseUri("https://api.spotify.com")
