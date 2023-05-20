@@ -1,14 +1,9 @@
 package com.itkhan.framework.spotify.tests;
 
+import com.itkhan.framework.spotify.api.applicationApi.PlaylistApi;
 import com.itkhan.framework.spotify.pojo.Error;
 import com.itkhan.framework.spotify.pojo.Playlist;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.filter.log.LogDetail;
-import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
-import org.testng.annotations.BeforeClass;
+import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -16,24 +11,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class PlaylistTests {
-    RequestSpecification requestSpecification;
-    ResponseSpecification responseSpecification;
-    private static String access_token = "";
-    @BeforeClass
-    public void beforeClass() {
-        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder()
-                .setBaseUri("https://api.spotify.com")
-                .setBasePath("/v1")
-                .addHeader("Authorization", "Bearer " + access_token)
-                .setContentType(ContentType.JSON)
-                .log(LogDetail.ALL);
-        requestSpecification = requestSpecBuilder.build();
 
-        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder()
-                .log(LogDetail.ALL);
-        responseSpecification = responseSpecBuilder.build();
-    }
-
+    /**
+     * Creates a spotify Playlist with given payload
+     * https://developer.spotify.com/documentation/web-api/reference/create-playlist
+     */
     @Test
     public void shouldBeAbleToCreateAPlaylist() {
         Playlist requestPlaylist = new Playlist()
@@ -42,40 +24,36 @@ public class PlaylistTests {
                 .setPublic(false)
                 ;
 
-        Playlist responsePlaylist = given(requestSpecification)
-                .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
-                .body(requestPlaylist)
-        .when()
-                .post("/users/{user_id}/playlists")
-        .then().spec(responseSpecification)
-                .assertThat()
-                .statusCode(201)
-                .contentType(ContentType.JSON)
-                .extract().response().as(Playlist.class);
+        Response response = PlaylistApi.post(requestPlaylist);
+        assertThat(response.statusCode(),equalTo(201));
+
+        Playlist responsePlaylist = response.as(Playlist.class);
 
         assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
         assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
         assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
     }
 
+    /**
+     * Retrieves a spotify playlist with given playlist ID
+     * https://developer.spotify.com/documentation/web-api/reference/get-playlist
+     */
     @Test
     public void shouldBeAbleToGetAPlaylist() {
+        Response response = PlaylistApi.get("6794ECQRd7OBRkcpMyyo40");
+        assertThat(response.statusCode(),equalTo(200));
 
-        Playlist responsePlaylist = given(requestSpecification)
-                .pathParam("playlist_id", "6794ECQRd7OBRkcpMyyo40")
-        .when()
-                .get("/playlists/{playlist_id}")
-        .then().spec(responseSpecification)
-                .assertThat()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .extract().response().as(Playlist.class);
+        Playlist responsePlaylist = response.as(Playlist.class);
 
         assertThat(responsePlaylist.getName(), equalTo("New Playlist"));
         assertThat(responsePlaylist.getDescription(), equalTo("New playlist description"));
         assertThat(responsePlaylist.getPublic(), equalTo(false));
     }
 
+    /**
+     * Updates Playlist's name, description and public properties as per the given payload
+     * https://developer.spotify.com/documentation/web-api/reference/change-playlist-details
+     */
     @Test
     public void shouldBeAbleToUpdateAPlaylist() {
         Playlist requestPlaylist = new Playlist()
@@ -84,16 +62,14 @@ public class PlaylistTests {
                 .setPublic(false)
                 ;
 
-        given(requestSpecification)
-                .pathParam("playlist_id", "3sjJgjSUDIXQNggx0SdnKY")
-                .body(requestPlaylist)
-        .when()
-                .put("/playlists/{playlist_id}")
-        .then().spec(responseSpecification)
-                .assertThat()
-                .statusCode(200);
+        Response response = PlaylistApi.update("3sjJgjSUDIXQNggx0SdnKY", requestPlaylist);
+        assertThat(response.statusCode(),equalTo(200));
     }
 
+    /**
+     * Validates that creating the playlist with empty name throws bad request error
+     * https://developer.spotify.com/documentation/web-api/reference/create-playlist
+     */
     @Test
     public void shouldNotBeAbleToCreateAPlaylistWithoutName() {
         Playlist requestPlaylist = new Playlist()
@@ -102,21 +78,19 @@ public class PlaylistTests {
                 .setPublic(false)
                 ;
 
-        Error error = given(requestSpecification)
-                .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
-                .body(requestPlaylist)
-        .when()
-                .post("/users/{user_id}/playlists")
-        .then().spec(responseSpecification)
-                .assertThat()
-                .statusCode(400)
-                .contentType(ContentType.JSON)
-                .extract().response().as(Error.class);
+        Response response = PlaylistApi.post(requestPlaylist);
+        assertThat(response.statusCode(),equalTo(400));
+
+        Error error = response.as(Error.class);
 
         assertThat(error.getError().getStatus(), equalTo(400));
         assertThat(error.getError().getMessage(),equalTo("Missing required field: name"));
     }
 
+    /**
+     * Validates that creating the playlist with expired or invalid access token throws unauthorized request error
+     * https://developer.spotify.com/documentation/web-api/reference/create-playlist
+     */
     @Test
     public void shouldNotBeAbleToCreateAPlaylistWithExpiredToken() {
         Playlist requestPlaylist = new Playlist()
@@ -125,21 +99,12 @@ public class PlaylistTests {
                 .setPublic(false)
                 ;
 
-        Error error = given()
-                .baseUri("https://api.spotify.com")
-                .basePath("/v1")
-                .header("Authorization", "Bearer " + "12345")
-                .contentType(ContentType.JSON)
-                .log().all()
-                .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
-                .body(requestPlaylist)
-        .when()
-                .post("/users/{user_id}/playlists")
-        .then().spec(responseSpecification)
-                .assertThat()
-                .statusCode(401)
-                .contentType(ContentType.JSON)
-                .extract().response().as(Error.class);
+        String invalid_access_token = "12345";
+
+        Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
+        assertThat(response.statusCode(),equalTo(401));
+
+        Error error = response.as(Error.class);
 
         assertThat(error.getError().getStatus(), equalTo(401));
         assertThat(error.getError().getMessage(),equalTo("Invalid access token"));

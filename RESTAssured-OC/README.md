@@ -1924,7 +1924,7 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 * `Error` represents tha main Json object i.e. error key, and `InnerError` class represents the nested json object that
   represents the fields status and message.
 * We can use the Builder pattern to set the properties of object at once. This can be done by going to the setters of
-  Name, Description, and public and returning th object of same class:
+  Name, Description, and public and returning the object of same class:
 
 ```java
     @JsonProperty("description")
@@ -1944,7 +1944,91 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 ### Framework - Create Reusable methods
 
-* 
+* Lets move the request and response specifications to the separate class `SpecBuilder.java` so it can be reused by multiple test classes.
+```java
+    public static RequestSpecification getRequestSpec() {
+        return new RequestSpecBuilder()
+                .setBaseUri("https://api.spotify.com")
+                .setBasePath("/v1")
+                .addHeader("Authorization", "Bearer " + access_token)
+                .setContentType(ContentType.JSON)
+                .build();
+    }
+
+    public static ResponseSpecification getResponseSpec() {
+        return new ResponseSpecBuilder()
+                .log(LogDetail.ALL)
+                .build();
+    }
+```
+* So now we can remove the `@BeforeClass` method from the PlaylistTest, and use the static methods either
+  by `SpecBuilder.getRequestSoec()` calling or import the method static at top and just call `getRequestSpec()`
+
+* We need to abstract the API call for playlist API so we can reuse the end points, path (routes) and the
+  specifications.
+* In this way we can have multiple classes for each of the API, and in the test classes we can hide the details of API
+  and only see the `What` instead of `How`.
+* Create a sub package `applicationnApi` in `api` package and create the class `PlaylistApi` in it.
+* Path for post() method of playlist api will remain same so we dont need to pass it as parameter.
+* For the purpose of this framework, we assume that the user account will remain same.
+* We will create the methods for get(), update() and post() call of playlist api that will return the `Response` and
+  accept the `Playlist` pojo as parameter.
+
+```java
+    public static Response post(Playlist requestPlaylist) {
+        return given(getRequestSpec())
+                    .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
+                    .body(requestPlaylist)
+                .when()
+                    .post("/users/{user_id}/playlists")
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
+```
+* Now we need to call our generic methods from `PlaylistApi` in our test class `PlaylistTest`
+```java
+    @Test
+    public void shouldBeAbleToCreateAPlaylist() {
+        Playlist requestPlaylist = new Playlist()
+                .setName("New Playlist")
+                .setDescription("New playlist description")
+                .setPublic(false)
+                ;
+
+        Response response = PlaylistApi.post(requestPlaylist);
+        assertThat(response.statusCode(),equalTo(201));
+
+        Playlist responsePlaylist = response.as(Playlist.class);
+
+        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
+        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
+        assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
+    }
+```
+
+* For the test case `shouldNotBeAbleToCreateAPlaylistWithExpiredToken()`, we are making the post call with dummy access
+  token.
+* Notice that we need to send the invalid token as request header but our `PlaylistApi.post()` method does not accept
+  the access token as parameter.
+* Add `.config(config().headerConfig(HeaderConfig.headerConfig().overwriteHeadersWithName("Authorization")))`
+  in `SpecBuilder.getRequestSpec()`
+* So for this, we need to overload the `PlaylistApi.post()` method
+```java
+public static Response post(Playlist requestPlaylist, String accessToken) {
+        return given(getRequestSpec().header("Authorization", "Bearer " + accessToken))
+                    .pathParam("user_id", "31ere62g3sbz2lsr27qcc5w4fsae")
+                    .body(requestPlaylist)
+                .when()
+                    .post("/users/{user_id}/playlists")
+                .then()
+                    .spec(getResponseSpec())
+                    .extract().response()
+                ;
+    }
+```
+
 
 
 ### Framework - Token Manager
