@@ -1892,9 +1892,59 @@ Automate any two of these. If you automate all four, you will become a ninja :-)
 
 ### Framework - Create POJOs
 
-* 
+* At the time there is a lot of hard coding like baseURL, access token, user ID, payload, endpoint etc. Specifications
+  re confined to just one test class.
+* We need to use POJO to be able to perform robust assertions.
+* Similarly given(), when(), then() are repeated in all of the test methods.
+
+* We start with `getPlaylist` API and create POJO class for the response body to perform deserialization.
+* Navigate to `https://www.jsonschema2pojo.org/` site that helps us to quickly generate POJO from json.
+* Paste the JSON response body, and add the package and class name. Select the source type as JSON, annotation style as
+  Jackson 2.x, and untick allow additional properties.
+* Download the zip file and add the generated POJO to your packages.
+* Remove the `@JsonPropertyOrder` and `@Generated` annotation from classes.
+* @JsonProperty is useful to give different name to a property other than the variable name. There can be cases where in
+  you would want to have a different property name than what you have in the variable name.
+* Create a POJO object for Playlist, and pass it as payload instead of string:
+```java
+        Playlist requestPlaylist = new Playlist();
+        requestPlaylist.setName("New Playlist");
+        requestPlaylist.setDescription("New playlist description");
+        requestPlaylist.setPublic(false);
+```
+* Similarly for the assertion, we deserialize the `Response` to `Playlist.class`
+```java
+        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
+        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
+        assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
+```
+
+* For the negative scenario, we need to create POJO for error object as well. Copy past the error response body to above
+  website and generate two pojo classes named `Error` and `InnerError`
+* `Error` represents tha main Json object i.e. error key, and `InnerError` class represents the nested json object that
+  represents the fields status and message.
+* We can use the Builder pattern to set the properties of object at once. This can be done by going to the setters of
+  Name, Description, and public and returning th object of same class:
+
+```java
+    @JsonProperty("description")
+    public Playlist setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+```
+* So now we can chain the setters and initialize the object of Playlist as:
+```java
+  Playlist requestPlaylist = new Playlist()
+          .setName("New Playlist")
+          .setDescription("New playlist description")
+          .setPublic(false)
+          ;
+```
 
 ### Framework - Create Reusable methods
+
+* 
 
 
 ### Framework - Token Manager
