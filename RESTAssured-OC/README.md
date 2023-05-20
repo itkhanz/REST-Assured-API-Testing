@@ -2333,6 +2333,47 @@ public class Route {
 
 ### Framework - Lombok
 
+* Configure the [Lombok Maven dependency](https://mvnrepository.com/artifact/org.projectlombok/lombok) into your `POM.xml`
+* At present, we have a lot of properties, getters and setters method for the `Playlist` POJO
+* In case the response body is complex and contains multiple nested JSON arrays then this class will be huge.
+* [Lombok](https://projectlombok.org/features/) provides annotations `@Getter` `@Setter` that allow use to skip writing getters and setters, and just write the variables.
+* Other annotations for our use are:
+  * `@Data`
+  * `@Value`
+  * `@Builder`
+  * `@Jacksonized` allows Lombok to work with Jackson internally and is an experimental future currently
+* Install the lombok plugin for Intellij as well which comes pre-installed with latest versions.
+* To verify if the plugin is working: right click on the POJO class, and you should see `Lombok` option in `Refactor`
+* If you need to see the code that lombok is generating, right click and choose `Refactor -> delombok`
+* Instead of `@Getter` and `@Setter` annotations, you can use the `@Data` annotation that will generate other useful
+  methods such as `equals`, `canEqual`, `hashCode`, `toString`.
+* `@Value` annotation allows us to ignore specifically writing the `private` as access modifier for class variables.
+
+#### Implement Lombok without Builder
+* Add `@Getter` and `@Setter` annotations at class level and remove all the getter and setter methods.
+* Now in our tests inside `playlistBuilder`, we need to change this to without using the builder pattern.
+```java
+    Playlist playlist = new Playlist();
+        playlist.setName(name);
+        playlist.setDescription(description);
+        playlist.set_public(_public);
+```
+* Also add the lombok annotations to `Error` class.
+
+#### Implement Lombok with Builder
+
+* Add the `@Builder` annotation with which we can initialize the object of class using builder pattern. Getters method
+  remains the same with this annotation, but the setters will change to remove the `set` prefix.
+* With this annotation, lombok will not identify the Jackson annotations such as `@JsonInclude`, so we have to
+  use `@Jacksonized` annotation as well.
+* So now we can initialize the Playlist object as:
+```java
+    return Playlist.builder()
+                .name(name)
+                .description(description)
+                ._public(_public)
+                .build();
+```
 
 ### Framework - Allure Reporting
 
