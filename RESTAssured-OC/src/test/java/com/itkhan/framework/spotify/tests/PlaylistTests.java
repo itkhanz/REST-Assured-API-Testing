@@ -20,20 +20,10 @@ public class PlaylistTests {
      */
     @Test
     public void shouldBeAbleToCreateAPlaylist() {
-        Playlist requestPlaylist = new Playlist()
-                .setName("New Playlist")
-                .setDescription("New playlist description")
-                .setPublic(false)
-                ;
-
+        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
         Response response = PlaylistApi.post(requestPlaylist);
-        assertThat(response.statusCode(),equalTo(201));
-
-        Playlist responsePlaylist = response.as(Playlist.class);
-
-        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
-        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
-        assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
+        assertStatusCode(response.statusCode(),201);
+        assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
     }
 
     /**
@@ -42,14 +32,10 @@ public class PlaylistTests {
      */
     @Test
     public void shouldBeAbleToGetAPlaylist() {
+        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
         Response response = PlaylistApi.get(DataLoader.getInstance().getGetPlaylistId());
-        assertThat(response.statusCode(),equalTo(200));
-
-        Playlist responsePlaylist = response.as(Playlist.class);
-
-        assertThat(responsePlaylist.getName(), equalTo("New Playlist"));
-        assertThat(responsePlaylist.getDescription(), equalTo("New playlist description"));
-        assertThat(responsePlaylist.getPublic(), equalTo(false));
+        assertStatusCode(response.statusCode(),200);
+        assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
     }
 
     /**
@@ -58,14 +44,9 @@ public class PlaylistTests {
      */
     @Test
     public void shouldBeAbleToUpdateAPlaylist() {
-        Playlist requestPlaylist = new Playlist()
-                .setName("Updated Playlist Name")
-                .setDescription("Updated playlist description")
-                .setPublic(false)
-                ;
-
+        Playlist requestPlaylist = playlistBuilder("Updated Playlist Name", "Updated playlist description", false);
         Response response = PlaylistApi.update(DataLoader.getInstance().getUpdatePlaylistId(), requestPlaylist);
-        assertThat(response.statusCode(),equalTo(200));
+        assertStatusCode(response.statusCode(),200);
     }
 
     /**
@@ -74,19 +55,10 @@ public class PlaylistTests {
      */
     @Test
     public void shouldNotBeAbleToCreateAPlaylistWithoutName() {
-        Playlist requestPlaylist = new Playlist()
-                .setName("")
-                .setDescription("New playlist description")
-                .setPublic(false)
-                ;
-
+        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
         Response response = PlaylistApi.post(requestPlaylist);
-        assertThat(response.statusCode(),equalTo(400));
-
-        Error error = response.as(Error.class);
-
-        assertThat(error.getError().getStatus(), equalTo(400));
-        assertThat(error.getError().getMessage(),equalTo("Missing required field: name"));
+        assertStatusCode(response.statusCode(),400);
+        assertError(response.as(Error.class), 400, "Missing required field: name");
     }
 
     /**
@@ -95,20 +67,56 @@ public class PlaylistTests {
      */
     @Test
     public void shouldNotBeAbleToCreateAPlaylistWithExpiredToken() {
-        Playlist requestPlaylist = new Playlist()
-                .setName("New Playlist")
-                .setDescription("New playlist description")
-                .setPublic(false)
-                ;
-
+        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
         String invalid_access_token = "12345";
-
         Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
-        assertThat(response.statusCode(),equalTo(401));
+        assertStatusCode(response.statusCode(),401);
+        assertError(response.as(Error.class), 401, "Invalid access token");
+    }
 
-        Error error = response.as(Error.class);
+    /**
+     * Creates the Playlist Object for Playlist POJO for serialization of API Payload
+     * @param name name of playlist
+     * @param description description of playlist
+     * @param _public privacy status
+     * @return Playlist Object
+     */
+    public Playlist playlistBuilder(String name, String description, boolean _public) {
+        return new Playlist()
+                .setName(name)
+                .setDescription(description)
+                .setPublic(_public)
+                ;
+    }
 
-        assertThat(error.getError().getStatus(), equalTo(401));
-        assertThat(error.getError().getMessage(),equalTo("Invalid access token"));
+    /**
+     * This method performs Hamcrest assertions on equality of Request and Response playlist name, description, and public properties
+     * @param responsePlaylist Playlist POJO for request Payload
+     * @param requestPlaylist Playlist POJO for response body
+     */
+    public void assertPlaylistEqual(Playlist responsePlaylist, Playlist requestPlaylist) {
+        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
+        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
+        assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
+    }
+
+    /**
+     * This method performs assertions for the Error Json returned as response body
+     * @param responseErr ErrorRoot POJO object
+     * @param expectedStatusCode expected error status code
+     * @param expectedMsg expected error message
+     */
+    public void assertError(Error responseErr, int expectedStatusCode, String expectedMsg){
+        assertThat(responseErr.getError().getStatus(), equalTo(expectedStatusCode));
+        assertThat(responseErr.getError().getMessage(), equalTo(expectedMsg));
+    }
+
+    /**
+     * This method performs assertions for validation of status code
+     * @param actualStatusCode
+     * @param expectedStatusCode
+     */
+    public void assertStatusCode(int actualStatusCode, int expectedStatusCode) {
+        assertThat(actualStatusCode, equalTo(expectedStatusCode));
     }
 }

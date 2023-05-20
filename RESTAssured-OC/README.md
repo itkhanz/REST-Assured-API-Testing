@@ -2233,7 +2233,9 @@ public class Route {
 * Now in the `TokenManager` class, we can retrieve the properties as `ConfigLoader.getInstance().getClientId()`
 * Create `data.properties` file and remove the hard-coded playlist IDs for GET and UPDATE Playlist Tests.
 * Create a separate `DataLoader` similar to the `ConfigLoader` on base of singleton pattern to load the properties file just once.
-* For maintaining the test data, its recommended to use a JSON file or obtain the test data from database before executing tests.
+* For maintaining the test data, its recommended to use a JSON file or obtain the test data from database before
+  executing tests. Then I'll recommend to store the data in a json or csv and fetch it from there. If using TestNG, you
+  can use data provider and fetch data in it.
 * Later, we will use Faker API to generate fake random invalid API token at runtime.
 
 * Below code snippet shows Singleton pattern implemented for DataLoader class.
@@ -2265,6 +2267,69 @@ public class Route {
 
 ### Framework - Test Class Refactoring
 
+* In our test cases, we are repeating the code for creating `Playlist` object, just the data is changing.
+* We will create a common method `PlaylistBuilder` that takes this data as arguments and return the created object.
+```java
+    public Playlist playlistBuilder(String name, String description, boolean _public) {
+        return new Playlist()
+                .setName(name)
+                .setDescription(description)
+                .setPublic(_public)
+                ;
+    }
+```
+* Similarly different assertions in the test are also duplicate, so we can create reusable methods for assertions also.
+```java
+    public void assertPlaylistEqual(Playlist responsePlaylist, Playlist requestPlaylist) {
+        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
+        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
+        assertThat(responsePlaylist.getPublic(), equalTo(requestPlaylist.getPublic()));
+    }
+```
+* Similarly, we make a reusable method for validation of status code, as well as validation of error object.
+* Some of these common methods can be moved to separate class and reused across several APIs such as `assertError` and `assertStatus` method
+* Now tour test class is refactored:
+````java
+    @Test
+    public void shouldBeAbleToCreateAPlaylist() {
+        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
+        Response response = PlaylistApi.post(requestPlaylist);
+        assertStatusCode(response.statusCode(),201);
+        assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
+    }
+    
+    @Test
+    public void shouldBeAbleToGetAPlaylist() {
+        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
+        Response response = PlaylistApi.get(DataLoader.getInstance().getGetPlaylistId());
+        assertStatusCode(response.statusCode(),200);
+        assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
+    }
+    
+    @Test
+    public void shouldBeAbleToUpdateAPlaylist() {
+        Playlist requestPlaylist = playlistBuilder("Updated Playlist Name", "Updated playlist description", false);
+        Response response = PlaylistApi.update(DataLoader.getInstance().getUpdatePlaylistId(), requestPlaylist);
+        assertStatusCode(response.statusCode(),200);
+    }
+    
+    @Test
+    public void shouldNotBeAbleToCreateAPlaylistWithoutName() {
+        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
+        Response response = PlaylistApi.post(requestPlaylist);
+        assertStatusCode(response.statusCode(),400);
+        assertError(response.as(Error.class), 400, "Missing required field: name");
+    }
+
+    @Test
+    public void shouldNotBeAbleToCreateAPlaylistWithExpiredToken() {
+        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
+        String invalid_access_token = "12345";
+        Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
+        assertStatusCode(response.statusCode(),401);
+        assertError(response.as(Error.class), 401, "Invalid access token");
+    }
+````
 
 ### Framework - Lombok
 
