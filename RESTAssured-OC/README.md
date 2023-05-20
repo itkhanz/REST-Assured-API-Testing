@@ -2192,13 +2192,25 @@ public static Response post(Playlist requestPlaylist, String accessToken) {
                 ;
     }
 ```
-* 
 
 ### Framework - Routes
 
+* We define endPoints for our API Calls in a separate class `Route` so we can reuse them in all the API calls and remove duplication.
+* We create them as constants using `final` keyword.
+```java
+public class Route {
+    public static final String BASE_PATH = "/v1";
+    public static final String API = "/api";
+    public static final String TOKEN = "/token";
+    public static final String USERS = "/users";
+    public static final String PLAYLISTS = "/playlists";
+}
+```
+* Now we can import these static constants in  `RestResource`, `PlaylistApi` and `SpecBuilder` classes.
 
 ### Framework - Property Loaders
 
+* 
 
 ### Framework - Test Class Refactoring
 

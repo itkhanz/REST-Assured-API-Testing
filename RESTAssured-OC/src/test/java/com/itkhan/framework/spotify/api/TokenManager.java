@@ -48,7 +48,7 @@ public class TokenManager {
         HashMap<String, String> formParams = new HashMap<String, String>();
         formParams.put("client_id", "");
         formParams.put("client_secret", "");
-        formParams.put("refresh_token", "AQD5Y3bQ82wP1lHeCYwtGErsFWtSFgm6zLV0z9UqVwx-eEEL4l637dv67y2zHiEkv_eJqklvIsNZ5BlQuy-SthOz4GZmye0VFi6UhwX896LjTvGG8m2NowOAA7iHTsHG3CY");
+        formParams.put("refresh_token", "");
         formParams.put("grant_type", "refresh_token");
 
         Response response = RestResource.postAccount(formParams);
