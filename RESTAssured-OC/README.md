@@ -2637,7 +2637,7 @@ public static void assertError(Error responseErr, StatusCode statusCode){
   program execution unless overwritten.
 * If the subsequent thread comes to the `getToken` method, it will not regenerate the new token if the `access_token`
   value is set by some other thread already.
-* This ensures tha the same `access_token` will be sgared among all the tests even in parallel execution.
+* This ensures tha the same `access_token` will be shared among all the tests even in parallel execution.
 * There must be no race-condition between multiple threads trying to access `getToken` that see the access_token as null.
 * To avoid this race-condition, we can use the `synchronized` keyword with `getToken` method which will hold the other threads if
   the method is already accessed by some other thread at the moment.
@@ -2646,7 +2646,32 @@ public static void assertError(Error responseErr, StatusCode statusCode){
 * Now execute the tests with maven cmd `mvn clean test`
 
 #### Enable for Multiple Environments
-
+* Notice that the baseUri is currently hard-coded in the SpecBuilder
+* If we want to execute the tests in multiple environments, then we need to declare the Uri as variable that can be
+  changed at runtime.
+* We can pass the baseUri as system property through maven command line as `.setBaseUri(System.getProperty("BASE_URI"))`
+* We can check in the `SpecBuilder` if the baseUri is passed as system property or else we use the default uri
+  from `Route` class:
+```java
+String baseUri = System.getProperty("BASE_URI") != null ? System.getProperty("BASE_URI"): BASE_URI;
+String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? System.getProperty("ACCOUNTS_BASE_URI"): ACCOUNTS_BASE_URI;
+```
+* Now we can pass these properties via maven as: `mvn clean test -D"BASE_URI=https://api.spotify.com" -D"ACCOUNTS_BASE_URI="https://accounts.spotify.com"`
+* If you want to be able to set the system properties via Intellij:
+  * Go to Run -> Edit Configurations -> Templates -> TestNg
+  * Add following as VM options in JDK Settings `-D"BASE_URI=https://api.spotify.com" -D"ACCOUNTS_BASE_URI="https://accounts.spotify.com"`
+  * Now whenever we execute the test cases through IDE, it will set these VM options as system properties.
+* [Specifying Test Parameters](https://maven.apache.org/surefire/maven-surefire-plugin/examples/testng.html#specifying-test-parameters)
+* Alternatively you can pass system variables as properties in POM.xml and run via `mvn clean test`:
+```xml
+<configuration>
+  <systemPropertyVariables>
+    <propertyName>firefox</propertyName>
+  </systemPropertyVariables>
+</configuration>
+```
+* Any parameter passed as command line will override the parameter from testng.xml
+* This is also helpful for configuring multiple environment test execution setup via Jenkins
 
 ### Framework - Integration with GitHub
 

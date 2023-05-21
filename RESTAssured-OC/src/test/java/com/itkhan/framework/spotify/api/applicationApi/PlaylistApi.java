@@ -6,8 +6,8 @@ import com.itkhan.framework.spotify.utils.ConfigLoader;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
-import static com.itkhan.framework.spotify.api.Route.PLAYLISTS;
-import static com.itkhan.framework.spotify.api.Route.USERS;
+import static com.itkhan.framework.spotify.constants.Route.PLAYLISTS;
+import static com.itkhan.framework.spotify.constants.Route.USERS;
 
 /*Reusable methods for Spotify Playlist API */
 public class PlaylistApi {

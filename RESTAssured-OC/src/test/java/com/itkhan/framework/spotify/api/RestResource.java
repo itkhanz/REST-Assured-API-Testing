@@ -1,12 +1,11 @@
 package com.itkhan.framework.spotify.api;
 
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import java.util.HashMap;
 
-import static com.itkhan.framework.spotify.api.Route.API;
-import static com.itkhan.framework.spotify.api.Route.TOKEN;
+import static com.itkhan.framework.spotify.constants.Route.API;
+import static com.itkhan.framework.spotify.constants.Route.TOKEN;
 import static com.itkhan.framework.spotify.api.SpecBuilder.*;
 import static io.restassured.RestAssured.given;
 
