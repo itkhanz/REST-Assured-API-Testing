@@ -1,6 +1,7 @@
 package com.itkhan.framework.spotify.tests;
 
 import com.itkhan.framework.spotify.api.applicationApi.PlaylistApi;
+import com.itkhan.framework.spotify.constants.StatusCode;
 import com.itkhan.framework.spotify.pojo.Error;
 import com.itkhan.framework.spotify.pojo.Playlist;
 import com.itkhan.framework.spotify.utils.DataLoader;
@@ -32,7 +33,7 @@ public class PlaylistTests {
     public void shouldBeAbleToCreateAPlaylist() {
         Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         Response response = PlaylistApi.post(requestPlaylist);
-        assertStatusCode(response.statusCode(),201);
+        assertStatusCode(response.statusCode(), StatusCode.CODE_201);
         assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
     }
 
@@ -45,7 +46,7 @@ public class PlaylistTests {
     public void shouldBeAbleToGetAPlaylist() {
         Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
         Response response = PlaylistApi.get(DataLoader.getInstance().getGetPlaylistId());
-        assertStatusCode(response.statusCode(),200);
+        assertStatusCode(response.statusCode(),StatusCode.CODE_200);
         assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
     }
 
@@ -58,7 +59,7 @@ public class PlaylistTests {
     public void shouldBeAbleToUpdateAPlaylist() {
         Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         Response response = PlaylistApi.update(DataLoader.getInstance().getUpdatePlaylistId(), requestPlaylist);
-        assertStatusCode(response.statusCode(),200);
+        assertStatusCode(response.statusCode(),StatusCode.CODE_200);
     }
 
     /**
@@ -70,8 +71,8 @@ public class PlaylistTests {
     public void shouldNotBeAbleToCreateAPlaylistWithoutName() {
         Playlist requestPlaylist = playlistBuilder("", generateDescription(), false);
         Response response = PlaylistApi.post(requestPlaylist);
-        assertStatusCode(response.statusCode(),400);
-        assertError(response.as(Error.class), 400, "Missing required field: name");
+        assertStatusCode(response.statusCode(),StatusCode.CODE_400);
+        assertError(response.as(Error.class), StatusCode.CODE_400);
     }
 
     /**
@@ -84,8 +85,8 @@ public class PlaylistTests {
         Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         String invalid_access_token = "12345";
         Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
-        assertStatusCode(response.statusCode(),401);
-        assertError(response.as(Error.class), 401, "Invalid access token");
+        assertStatusCode(response.statusCode(),StatusCode.CODE_401);
+        assertError(response.as(Error.class), StatusCode.CODE_401);
     }
 
 }

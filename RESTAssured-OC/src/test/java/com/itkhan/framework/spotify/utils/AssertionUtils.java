@@ -1,5 +1,6 @@
 package com.itkhan.framework.spotify.utils;
 
+import com.itkhan.framework.spotify.constants.StatusCode;
 import com.itkhan.framework.spotify.pojo.Error;
 import com.itkhan.framework.spotify.pojo.Playlist;
 import io.qameta.allure.Step;
@@ -24,22 +25,21 @@ public class AssertionUtils {
     /**
      * This method performs assertions for the Error Json returned as response body
      * @param responseErr ErrorRoot POJO object
-     * @param expectedStatusCode expected error status code
-     * @param expectedMsg expected error message
+     * @param statusCode StatusCode ENUM constant that stores code and message
      */
     @Step
-    public static void assertError(Error responseErr, int expectedStatusCode, String expectedMsg){
-        assertThat(responseErr.getError().getStatus(), equalTo(expectedStatusCode));
-        assertThat(responseErr.getError().getMessage(), equalTo(expectedMsg));
+    public static void assertError(Error responseErr, StatusCode statusCode){
+        assertThat(responseErr.getError().getStatus(), equalTo(statusCode.code));
+        assertThat(responseErr.getError().getMessage(), equalTo(statusCode.msg));
     }
 
     /**
      * This method performs assertions for validation of status code
      * @param actualStatusCode
-     * @param expectedStatusCode
+     * @param statusCode StatusCode ENUM constant that stores code and message
      */
     @Step
-    public static void assertStatusCode(int actualStatusCode, int expectedStatusCode) {
-        assertThat(actualStatusCode, equalTo(expectedStatusCode));
+    public static void assertStatusCode(int actualStatusCode, StatusCode statusCode) {
+        assertThat(actualStatusCode, equalTo(statusCode.code));
     }
 }

@@ -2590,9 +2590,44 @@ public class FakerUtils {
 ```java
 Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
 ```
-* 
 
 ### Java Enum to Store Status Codes
+
+* To avoid repetition and hard-coding of status codes and error messages for the API calls in tests, we use `ENUM` class
+  which stores each status code and error message as constant with multiple values.
+* Create a `StatusCode` enum class for the status code and messages as constants
+```java
+public enum StatusCode {
+    CODE_200(200, ""),
+    CODE_201(201, ""),
+    CODE_400(400, "Missing required field: name"),
+    CODE_401(401, "Invalid access token");
+
+    public final int code;
+    public final String msg;
+
+    StatusCode(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+}
+```
+* Now you can use thest StausCode in your `PlaylistTests.java` as:
+```java
+assertStatusCode(response.statusCode(),StatusCode.CODE_400);
+assertError(response.as(Error.class), StatusCode.CODE_400);
+```
+* For this to work, we need to change the parameter types of assertion methods to be of type `StatusCode`
+```java
+public static void assertStatusCode(int actualStatusCode, StatusCode statusCode) {
+    assertThat(actualStatusCode, equalTo(statusCode.code));
+}
+public static void assertError(Error responseErr, StatusCode statusCode){
+    assertThat(responseErr.getError().getStatus(), equalTo(statusCode.code));
+    assertThat(responseErr.getError().getMessage(), equalTo(statusCode.msg));
+}
+```
+
 
 ### Enable Parallel Execution
 
