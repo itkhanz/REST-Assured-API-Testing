@@ -2520,6 +2520,42 @@ allure.link.tms.pattern=https://example.org/tms/{}
 
 ### Framework - Maven Command Line
 
+* Maven is already installed and configured as path vairable in windows.
+* We already have maven compiler and surefire plugin setup.
+* [TestNG XML suite file](https://testng.org/doc/documentation-main.html)
+* Create a `testng.xml` file at project root:
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Spotify OAuth2.0 Suite" verbose="1" >
+    <test name="Playlists API" >
+        <classes>
+            <class name="com.itkhan.framework.spotify.tests.PlaylistTests" />
+        </classes>
+    </test>
+</suite>
+
+```
+* You can run this suite from Intellij by right clicking the file and choose run.
+* [Using suite xml files with maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/testng.html#using-suite-xml-files)
+* [Run Testng.xml file on terminal with maven](https://leylagln.medium.com/how-we-can-run-testng-xml-file-on-terminal-with-maven-4e2d277a4093)
+* Another alternative is to use TestNG suite XML files. Add the following lines inside your
+  maven-surefire-plugin `configuration` tag in `plugin` tag:
+
+```java
+<configuration>
+  <suiteXmlFiles>
+    <suiteXmlFile>testng.xml</suiteXmlFile>
+  </suiteXmlFiles>
+</configuration>
+```
+* [TestNG – Run Tests and Suites using Maven](https://howtodoinjava.com/testng/how-to-execute-testng-tests-with-maven-build/)
+* To execute the tests with, navigate to project root directory, run command `mvn clean test -D"suiteXmlFile=testng.xml"`
+  to execute a specific test class or `mvn clean test` to execute all tests and suites.
+* This is important when later we integrate to CI tool like Jenkins.
+
+<img src="doc/maven-cmd.png">
 
 ### Framework - Important Optimizations
 
