@@ -54,7 +54,7 @@ public class RestResource {
      * @return Response object from the REST Assured
      */
     public static Response post(String path, Object requestPlaylist, String accessToken) {
-        return given(getRequestSpec().header("Authorization", "Bearer " + accessToken))
+        return given(getRequestSpec().auth().oauth2(accessToken))
                     .body(requestPlaylist)
                 .when()
                     .post(path)

@@ -79,7 +79,7 @@ public class PlaylistTests {
     @Story("Create a playlist story")
     @Test(description = "should not be able to create a playlist with expired token")
     public void shouldNotBeAbleToCreateAPlaylistWithExpiredToken() {
-        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
+        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
         String invalid_access_token = "12345";
         Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
         assertStatusCode(response.statusCode(),401);

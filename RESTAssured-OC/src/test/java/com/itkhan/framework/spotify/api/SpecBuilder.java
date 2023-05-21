@@ -22,12 +22,13 @@ public class SpecBuilder {
         return new RequestSpecBuilder()
                 .setBaseUri("https://api.spotify.com")
                 .setBasePath(BASE_PATH)
-                .addHeader("Authorization", "Bearer " + access_token)
+                //.addHeader("Authorization", "Bearer " + access_token)
                 .setContentType(ContentType.JSON)
                 .addFilter(new AllureRestAssured())
                 .log(LogDetail.ALL)
                 .build()
-                .config(config().headerConfig(HeaderConfig.headerConfig().overwriteHeadersWithName("Authorization")))
+                //.config(config().headerConfig(HeaderConfig.headerConfig().overwriteHeadersWithName("Authorization")))
+                .auth().oauth2(access_token)
                 ;
     }
 

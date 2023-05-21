@@ -2559,6 +2559,22 @@ allure.link.tms.pattern=https://example.org/tms/{}
 
 ### Framework - Important Optimizations
 
+#### Use OAuth method to supply token
+* [Rest Assured OAuth](https://github.com/rest-assured/rest-assured/wiki/Usage#oauth)
+* Currently, we are passing the access_token via header() method `.addHeader("Authorization", "Bearer " + access_token)`
+* Depending on the authorization method used, we can alternative use `.auth().oauth2()` method in our SpecBuilder
+  request specification and the overloaded post method in RestResource.
+
+### Java Fake API
+
+* 
+
+### Java Enum to Store Status Codes
+
+### Enable Parallel Execution
+
+### Enable for Multiple Environments
+
 
 ### Framework - Integration with GitHub
 
