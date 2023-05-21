@@ -2685,13 +2685,20 @@ String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? Syste
 * Since Jenkins is already installed, navigate to jenkins directory and launch the jenkins with
   command `java -jar jenkins.war`
 * Launch `http://localhost:8080`
-* Create the Freestyle project
+* Create the Freestyle project and configure the following:
+  * Add the choice parameters for `BASE_URL` and `ACCOUNTS_BASE_URL`
+  * Add the password parameters for properties from `config.properties`
+  * **Branches to Build (Branch Specifier)** to `*/restassured-oc`
+  * **Sparse Checkout Path** to `RESTAssured-OC/`
+  * **Goals (Invoke top-level Maven targets)** to `clean test -DBASE_URI=${BASE_URL} -DACCOUNTS_BASE_URI=${ACCOUNTS_BASE_URI} -Dclient_secret=${client_secret} -Dclient_id=${client_id} -Drefresh_token=${refresh_token} -Dgrant_type=${grant_type} -Duser_id=${user_id}`
+  * **POM** to `$workspace\RESTAssured-OC\pom.xml`
+  * **Allure Report Path** to `RESTAssured-OC\target\allure-results`
 * Since `config.properties` is not pushed to GitHub so jenkins cannot access it, so we need a workaround to pass the secret properties as system properties in jenkins.
 * Moreover, we configure the getters methods to look for system properties first and then into config.properties
 * Hence we run the tests via `clean test -DBASE_URI=${BASE_URL} -DACCOUNTS_BASE_URI=${ACCOUNTS_BASE_URI} -Dclient_secret=${client_secret} -Dclient_id=${client_id} -Drefresh_token=${refresh_token} -Dgrant_type=${grant_type} -Duser_id=${user_id}`
 ```java
     private ConfigLoader(){
-        //loads the properties from config.properties that has all the secret Key
+        //loads the properties from config.properties that has all the secret Keys
         if (Objects.equals(System.getProperty("agent"), "localhost")) {
             properties = PropertyUtils.propertyLoader("src/test/resources/config.properties");
         }else {
@@ -2712,5 +2719,8 @@ String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? Syste
   * on local: `mvn clean  test -D"agent=localhost"`
   * on Jenkins: `clean test -DBASE_URI=${BASE_URL} -DACCOUNTS_BASE_URI=${ACCOUNTS_BASE_URI} -Dclient_secret=${client_secret} -Dclient_id=${client_id} -Drefresh_token=${refresh_token} -Dgrant_type=${grant_type} -Duser_id=${user_id}`
 
+<img src="doc/jenkins-build-parameters.png">
 
+<img src="doc/jenkins-allure.png">
 
+<img src="doc/jenkins-allure-defect.png">
