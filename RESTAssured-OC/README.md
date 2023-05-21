@@ -2331,6 +2331,10 @@ public class Route {
     }
 ````
 
+* Move the assertions and builders to their own respective classes `AssertionUtils`, and `BuilderUtils` so test class
+  only contains the test methods.
+* 
+
 ### Framework - Lombok
 
 * Configure the [Lombok Maven dependency](https://mvnrepository.com/artifact/org.projectlombok/lombok) into your `POM.xml`

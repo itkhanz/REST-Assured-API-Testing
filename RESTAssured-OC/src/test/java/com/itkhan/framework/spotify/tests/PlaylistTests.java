@@ -7,9 +7,8 @@ import com.itkhan.framework.spotify.utils.DataLoader;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static com.itkhan.framework.spotify.utils.AssertionUtils.*;
+import static com.itkhan.framework.spotify.utils.BuilderUtils.playlistBuilder;
 
 /*This class contains the tests for Spotify Playlist API */
 public class PlaylistTests {
@@ -74,64 +73,4 @@ public class PlaylistTests {
         assertError(response.as(Error.class), 401, "Invalid access token");
     }
 
-    /**
-     * Creates the Playlist Object for Playlist POJO for serialization of API Payload
-     * @param name name of playlist
-     * @param description description of playlist
-     * @param _public privacy status
-     * @return Playlist Object
-     */
-    public Playlist playlistBuilder(String name, String description, boolean _public) {
-        //With lombok Builder pattern
-        return Playlist.builder()
-                .name(name)
-                .description(description)
-                ._public(_public)
-                .build();
-
-        //Without Builder pattern
-        /*Playlist playlist = new Playlist();
-        playlist.setName(name);
-        playlist.setDescription(description);
-        playlist.set_public(_public);
-        return  playlist;*/
-
-        //With normal Builder pattern
-        /*return new Playlist()
-                .setName(name)
-                .setDescription(description)
-                .setPublic(_public)
-                ;*/
-    }
-
-    /**
-     * This method performs Hamcrest assertions on equality of Request and Response playlist name, description, and public properties
-     * @param responsePlaylist Playlist POJO for request Payload
-     * @param requestPlaylist Playlist POJO for response body
-     */
-    public void assertPlaylistEqual(Playlist responsePlaylist, Playlist requestPlaylist) {
-        assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
-        assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
-        assertThat(responsePlaylist.get_public(), equalTo(requestPlaylist.get_public()));
-    }
-
-    /**
-     * This method performs assertions for the Error Json returned as response body
-     * @param responseErr ErrorRoot POJO object
-     * @param expectedStatusCode expected error status code
-     * @param expectedMsg expected error message
-     */
-    public void assertError(Error responseErr, int expectedStatusCode, String expectedMsg){
-        assertThat(responseErr.getError().getStatus(), equalTo(expectedStatusCode));
-        assertThat(responseErr.getError().getMessage(), equalTo(expectedMsg));
-    }
-
-    /**
-     * This method performs assertions for validation of status code
-     * @param actualStatusCode
-     * @param expectedStatusCode
-     */
-    public void assertStatusCode(int actualStatusCode, int expectedStatusCode) {
-        assertThat(actualStatusCode, equalTo(expectedStatusCode));
-    }
 }
