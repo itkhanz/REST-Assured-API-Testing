@@ -2565,8 +2565,31 @@ allure.link.tms.pattern=https://example.org/tms/{}
 * Depending on the authorization method used, we can alternative use `.auth().oauth2()` method in our SpecBuilder
   request specification and the overloaded post method in RestResource.
 
-### Java Fake API
+### Java Faker API
 
+* [Java Faker Library](https://github.com/DiUS/java-faker) is useful for generating fake test data
+* Add [javafaker](https://mvnrepository.com/artifact/com.github.javafaker/javafaker) maven dependency to your POM.xml
+* Create a Utility method to generate random test name and description with regex of allowed characters and length
+```java
+public class FakerUtils {
+    public static String generateName(){
+        Faker faker = new Faker();
+        return "Playlist " + faker.regexify("[A-Za-z0-9 ,_-]{10}");
+    }
+
+    public static String generateDescription(){
+        Faker faker = new Faker();
+        return "Description " + faker.regexify("[ A-Za-z0-9_@./#&+-]{50}");
+    }
+}
+```
+
+* And use the statically imported methods `generateName()` and `generateDescription()` as arguments to playlistBuilder
+  instead of hard coded arguments
+
+```java
+Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
+```
 * 
 
 ### Java Enum to Store Status Codes

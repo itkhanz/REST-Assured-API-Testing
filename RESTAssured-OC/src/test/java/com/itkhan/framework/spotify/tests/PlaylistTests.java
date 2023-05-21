@@ -10,6 +10,8 @@ import org.testng.annotations.Test;
 
 import static com.itkhan.framework.spotify.utils.AssertionUtils.*;
 import static com.itkhan.framework.spotify.utils.BuilderUtils.playlistBuilder;
+import static com.itkhan.framework.spotify.utils.FakerUtils.generateDescription;
+import static com.itkhan.framework.spotify.utils.FakerUtils.generateName;
 
 /*This class contains the tests for Spotify Playlist API */
 @Epic("Spotify Oauth 2.0")
@@ -28,7 +30,7 @@ public class PlaylistTests {
     @Description("Creates a spotify Playlist with given payload")
     @Test(description = "should be able to create a playlist")
     public void shouldBeAbleToCreateAPlaylist() {
-        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
+        Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         Response response = PlaylistApi.post(requestPlaylist);
         assertStatusCode(response.statusCode(),201);
         assertPlaylistEqual(response.as(Playlist.class),requestPlaylist);
@@ -54,7 +56,7 @@ public class PlaylistTests {
     @Story("Update a playlist story")
     @Test(description = "should be able to update a playlist")
     public void shouldBeAbleToUpdateAPlaylist() {
-        Playlist requestPlaylist = playlistBuilder("Updated Playlist Name", "Updated playlist description", false);
+        Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         Response response = PlaylistApi.update(DataLoader.getInstance().getUpdatePlaylistId(), requestPlaylist);
         assertStatusCode(response.statusCode(),200);
     }
@@ -66,7 +68,7 @@ public class PlaylistTests {
     @Story("Create a playlist story")
     @Test(description = "should not be able to create a playlist without name")
     public void shouldNotBeAbleToCreateAPlaylistWithoutName() {
-        Playlist requestPlaylist = playlistBuilder("", "New Playlist", false);
+        Playlist requestPlaylist = playlistBuilder("", generateDescription(), false);
         Response response = PlaylistApi.post(requestPlaylist);
         assertStatusCode(response.statusCode(),400);
         assertError(response.as(Error.class), 400, "Missing required field: name");
@@ -79,7 +81,7 @@ public class PlaylistTests {
     @Story("Create a playlist story")
     @Test(description = "should not be able to create a playlist with expired token")
     public void shouldNotBeAbleToCreateAPlaylistWithExpiredToken() {
-        Playlist requestPlaylist = playlistBuilder("New Playlist", "New playlist description", false);
+        Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
         String invalid_access_token = "12345";
         Response response = PlaylistApi.post(requestPlaylist, invalid_access_token);
         assertStatusCode(response.statusCode(),401);
