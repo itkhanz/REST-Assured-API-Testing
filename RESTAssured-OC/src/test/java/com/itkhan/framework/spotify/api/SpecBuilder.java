@@ -15,7 +15,7 @@ import static io.restassured.RestAssured.config;
 
 /*generic Request and Response Specifications for the Spotify API */
 public class SpecBuilder {
-    static String access_token = getToken();
+    //static String access_token = getToken();
 
     /*Authorization Header is configured to be overwritten because for negative scenarios we need to pass the different access_token than default */
     public static RequestSpecification getRequestSpec() {
@@ -28,7 +28,7 @@ public class SpecBuilder {
                 .log(LogDetail.ALL)
                 .build()
                 //.config(config().headerConfig(HeaderConfig.headerConfig().overwriteHeadersWithName("Authorization")))
-                .auth().oauth2(access_token)
+                .auth().oauth2(getToken())
                 ;
     }
 

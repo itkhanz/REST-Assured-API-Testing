@@ -2565,7 +2565,7 @@ allure.link.tms.pattern=https://example.org/tms/{}
 * Depending on the authorization method used, we can alternative use `.auth().oauth2()` method in our SpecBuilder
   request specification and the overloaded post method in RestResource.
 
-### Java Faker API
+#### Java Faker API
 
 * [Java Faker Library](https://github.com/DiUS/java-faker) is useful for generating fake test data
 * Add [javafaker](https://mvnrepository.com/artifact/com.github.javafaker/javafaker) maven dependency to your POM.xml
@@ -2591,7 +2591,7 @@ public class FakerUtils {
 Playlist requestPlaylist = playlistBuilder(generateName(), generateDescription(), false);
 ```
 
-### Java Enum to Store Status Codes
+#### Java Enum to Store Status Codes
 
 * To avoid repetition and hard-coding of status codes and error messages for the API calls in tests, we use `ENUM` class
   which stores each status code and error message as constant with multiple values.
@@ -2629,9 +2629,23 @@ public static void assertError(Error responseErr, StatusCode statusCode){
 ```
 
 
-### Enable Parallel Execution
+#### Enable Parallel Execution
+* The `access_token` generated at the run time has to be shared among all the test methods.
+* We cannot have separate access_token for each method because if the token is renewed then the previous token becomes
+  invalid so the tests running in parallel might fail.
+* Since `access_token` and `expiry_time` are declares as static variables, they retain their value throughout the
+  program execution unless overwritten.
+* If the subsequent thread comes to the `getToken` method, it will not regenerate the new token if the `access_token`
+  value is set by some other thread already.
+* This ensures tha the same `access_token` will be sgared among all the tests even in parallel execution.
+* There must be no race-condition between multiple threads trying to access `getToken` that see the access_token as null.
+* To avoid this race-condition, we can use the `synchronized` keyword with `getToken` method which will hold the other threads if
+  the method is already accessed by some other thread at the moment.
+* In our framework, we do not have any instance variables and all the methods are stateless which is important for multi-threading.
+* To enable parallel execution, add `thread-count="3" parallel="methods"` to testng.xml suite
+* Now execute the tests with maven cmd `mvn clean test`
 
-### Enable for Multiple Environments
+#### Enable for Multiple Environments
 
 
 ### Framework - Integration with GitHub

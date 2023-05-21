@@ -22,7 +22,7 @@ public class TokenManager {
      * If the token is null or expired, then it makes call to fetch new access_token and return the updated access_token
      * @return access_token
      */
-    public static String getToken() {
+    public synchronized static String getToken() {
         try {
             if (access_token == null || Instant.now().isAfter(expiry_time)) {
                 System.out.println("Renewing token.....");
