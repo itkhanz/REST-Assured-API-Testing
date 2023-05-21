@@ -12,7 +12,14 @@ public class ConfigLoader {
     private static ConfigLoader configLoader;
 
     private ConfigLoader(){
-        properties = PropertyUtils.propertyLoader("src/test/resources/config.properties");
+        //loads the properties from config.properties that has all the secret Keys
+        //Since config.properties is not pushed to GitHub so jenkins cannot access it
+        //so we need a workaround to pass the secret properties as system properties in jenkins
+        if (Objects.equals(System.getProperty("agent"), "localhost")) {
+            properties = PropertyUtils.propertyLoader("src/test/resources/config.properties");
+        }else {
+            properties = PropertyUtils.propertyLoader("src/test/resources/public.properties");
+        }
     }
 
     public static ConfigLoader getInstance(){

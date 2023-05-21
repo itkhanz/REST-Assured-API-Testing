@@ -2686,7 +2686,31 @@ String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? Syste
   command `java -jar jenkins.war`
 * Launch `http://localhost:8080`
 * Create the Freestyle project
-
+* Since `config.properties` is not pushed to GitHub so jenkins cannot access it, so we need a workaround to pass the secret properties as system properties in jenkins.
+* Moreover, we configure the getters methods to look for system properties first and then into config.properties
+* Hence we run the tests via `clean test -DBASE_URI=${BASE_URL} -DACCOUNTS_BASE_URI=${ACCOUNTS_BASE_URI} -Dclient_secret=${client_secret} -Dclient_id=${client_id} -Drefresh_token=${refresh_token} -Dgrant_type=${grant_type} -Duser_id=${user_id}`
+```java
+    private ConfigLoader(){
+        //loads the properties from config.properties that has all the secret Key
+        if (Objects.equals(System.getProperty("agent"), "localhost")) {
+            properties = PropertyUtils.propertyLoader("src/test/resources/config.properties");
+        }else {
+            properties = PropertyUtils.propertyLoader("src/test/resources/public.properties");
+        }
+    }
+    
+    public String getClientSecret(){
+        String clientSecret = System.getProperty("client_secret") != null ?
+        System.getProperty("client_secret")
+        :
+        Objects.requireNonNull(properties.getProperty("client_secret"), "property client_secret is not specified in the config.properties file");
+        return clientSecret;
+    }
+    
+```
+* To run the tests:
+  * on local: `mvn clean  test -D"agent=localhost"`
+  * on Jenkins: `clean test -DBASE_URI=${BASE_URL} -DACCOUNTS_BASE_URI=${ACCOUNTS_BASE_URI} -Dclient_secret=${client_secret} -Dclient_id=${client_id} -Drefresh_token=${refresh_token} -Dgrant_type=${grant_type} -Duser_id=${user_id}`
 
 
 
