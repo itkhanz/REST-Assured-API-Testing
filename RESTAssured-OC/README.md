@@ -2675,8 +2675,17 @@ String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? Syste
 
 ### Framework - Integration with GitHub
 
+* Create a GitHub repo for the framework
+* Add changes to teh staging environment
+* Commit the changes
+* Push to the remote GitHub repo
 
 ### Framework - CI
+
+* Since Jenkins is already installed, navigate to jenkins directory and launch the jenkins with
+  command `java -jar jenkins.war`
+* Launch `http://localhost:8080`
+* Create the Freestyle project
 
 
 

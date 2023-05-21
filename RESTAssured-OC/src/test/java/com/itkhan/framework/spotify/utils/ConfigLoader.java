@@ -28,22 +28,42 @@ public class ConfigLoader {
         else throw new RuntimeException("property client_id is not specified in the config.properties file");*/
 
         //Better optimized way
-        return Objects.requireNonNull(properties.getProperty("client_id"), "property client_id is not specified in the config.properties file");
+        String clientID = System.getProperty("client_id") != null ?
+                System.getProperty("client_id")
+                :
+                Objects.requireNonNull(properties.getProperty("client_id"), "property client_id is not specified in the config.properties file");
+        return clientID;
     }
 
     public String getClientSecret(){
-        return Objects.requireNonNull(properties.getProperty("client_secret"), "property client_secret is not specified in the config.properties file");
+        String clientSecret = System.getProperty("client_secret") != null ?
+                System.getProperty("client_secret")
+                :
+                Objects.requireNonNull(properties.getProperty("client_secret"), "property client_secret is not specified in the config.properties file");
+        return clientSecret;
     }
 
     public String getGrantType(){
-        return Objects.requireNonNull(properties.getProperty("grant_type"), "property grant_type is not specified in the config.properties file");
+        String grantType = System.getProperty("grant_type") != null ?
+                System.getProperty("grant_type")
+                :
+                Objects.requireNonNull(properties.getProperty("grant_type"), "property grant_type is not specified in the config.properties file");
+        return grantType;
     }
 
     public String getRefreshToken(){
-        return Objects.requireNonNull(properties.getProperty("refresh_token"), "property refresh_token is not specified in the config.properties file");
+        String refreshToken = System.getProperty("refresh_token") != null ?
+                System.getProperty("refresh_token")
+                :
+                Objects.requireNonNull(properties.getProperty("refresh_token"), "property refresh_token is not specified in the config.properties file");
+        return refreshToken;
     }
 
     public String getUser(){
-        return Objects.requireNonNull(properties.getProperty("user_id"), "property user_id is not specified in the config.properties file");
+        String userID = System.getProperty("user_id") != null ?
+                System.getProperty("user_id")
+                :
+                Objects.requireNonNull(properties.getProperty("user_id"), "property user_id is not specified in the config.properties file");
+        return userID;
     }
 }
