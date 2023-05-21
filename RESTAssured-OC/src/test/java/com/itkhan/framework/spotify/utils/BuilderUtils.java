@@ -1,6 +1,7 @@
 package com.itkhan.framework.spotify.utils;
 
 import com.itkhan.framework.spotify.pojo.Playlist;
+import io.qameta.allure.Step;
 
 public class BuilderUtils {
     /**
@@ -10,6 +11,7 @@ public class BuilderUtils {
      * @param _public privacy status
      * @return Playlist Object
      */
+    @Step
     public static Playlist playlistBuilder(String name, String description, boolean _public) {
         //With lombok Builder pattern
         return Playlist.builder()

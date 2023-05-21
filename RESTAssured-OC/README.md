@@ -2381,6 +2381,142 @@ public class Route {
 
 ### Framework - Allure Reporting
 
+* [Allure Website](https://qameta.io/allure-report/)
+* [Allure Documentation](https://docs.qameta.io/allure-report/)
+* [Allure GitHub](https://github.com/allure-framework/allure2)
+* [Allure Installation for Windows OS](https://docs.qameta.io/allure-report/#_windows)
+* Install scoop first with following commands in windows powershell 
+```shell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser # Optional: Needed to run a remote script the first time
+> irm get.scoop.sh | iex
+```
+* and enter the following command in powershell `scoop install allure`
+* Enter the `allure` command in terminal that will show the available help commands for allure
+* `allure --version` will show the version of allure installed
+<img src="doc/allure-installation.png">
+
+* [Allure TestNG](https://docs.qameta.io/allure-report/#_testng)
+* Download and configure [Allure TestNG](https://mvnrepository.com/artifact/io.qameta.allure/allure-testng/2.22.0)
+  and [Allure RestAssured](https://mvnrepository.com/artifact/io.qameta.allure/allure-rest-assured/2.22.0) dependencies
+  from maven central in your POM.xml
+* Search or latest version
+  of [Maven surefire plugin](https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin) and add
+  the following to your POM.xml
+* Search for latest version of [aspectj](https://mvnrepository.com/artifact/org.aspectj/aspectjweaver) and add it as property
+
+```xml
+  <properties>
+    <aspectj.version>1.9.19</aspectj.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <argLine>
+            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+          </argLine>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+```
+* Allure uses a local Jetty instance to create HTML CSS and other related files to generate the report and serve on server.
+* [Allure TestNG features](https://docs.qameta.io/allure-report/#_testng)
+* In order to add human-readable name to any test method you need to use description property of @Test annotation
+* Similarly you can add detailed description for each test method. To add such description use `@Description` annotation:
+* Steps are any actions that constitute a testing scenario. Steps can be used in different testing scenarios. They can:
+  be parametrized, make checks, have nested steps, and create attachments. Each step has a name.
+* In order to define steps in Java code, you need to annotate the respective methods with `@Step` annotation. When not
+  specified, the step name is equal to the annotated method name.
+* You can `link` your tests to some resources such as `TMS` (test management system) or `bug` tracker.
+* In some development approaches tests are classified by Features and Stories. To add such mapping you can use Epic,
+  `@Feature` and `Story` annotations:
+
+```java
+    @Epic("Allure examples")
+    @Feature("Junit 4 support")
+    public class MyTest {
+    
+        @Test
+        @Story("Base support for bdd annotations")
+        @Story("Advanced support for bdd annotations")
+        public void testSomething() throws Exception {
+            // ...
+        }
+        
+        @Test(description = "Human-readable test name")
+        public void testSomething() throws Exception {
+            //...
+        }
+        
+        @Test
+        @Description("Some detailed test description")
+        public void testSomething() throws Exception {
+            ...
+        }
+        
+        @Step("Type {user.name} / {user.password}.")
+        public void loginWith(User user) {
+         ...
+        }
+        
+        @Link("https://example.org")
+        @Link(name = "allure", type = "mylink")
+        public void testSomething() {
+             ...
+        }
+        
+        @Issue("123")
+        @Issue("432")
+        public void testSomething() {
+             ...
+        }
+        
+        @TmsLink("test-1")
+        @TmsLink("test-2")
+        public void testSomething() {
+             ...
+        }
+    }
+    
+```
+* Add the allure properties in `src/test/resources/allure.properties`
+```properties
+allure.results.directory=target/allure-results
+allure.link.mylink.pattern=https://example.org/mylink/{}
+allure.link.issue.pattern=https://example.org/issue/{}
+allure.link.tms.pattern=https://example.org/tms/{}
+```
+
+* [Allure Rest Assured](https://github.com/allure-framework/allure-java#rest-assured)
+* To populate the request payload, and response body in allure report, we can use the `.filter(new AllureRestAssured())`
+  method in our request and response specifications.
+* You can use `allure serve target/allure-results` command to view allure report.
+* Before executing the tests again, stop the allure  pressing `Ctrl + c`.
+* Allure doesn't generate a standalone HTML that can be zipped and send over email.
+* Instead, you can use Allure plugin for Jenkins that will generate the reports on the Jenkins server itself. Then you
+  can share the report URL from the Jenkins server. Just make sure stakeholders has access to the Jenkins URL. Here's
+  the documentation: https://docs.qameta.io/allure-report/reporting/jenkins.
+* Also, with this plugin, you don't have to worry about deleting previous reports or doing any report directory
+  management. Allure plugin will take care of all that. In fact, it will show you the historical trend as well which is
+  very useful.
+
+<img src="doc/allure-suites.png">
+
+<img src="doc/allure-behaviors.png">
+
+<img src="doc/allure-logs.png">
 
 ### Framework - Maven Command Line
 

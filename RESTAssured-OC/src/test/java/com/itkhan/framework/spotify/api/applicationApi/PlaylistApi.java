@@ -3,6 +3,7 @@ package com.itkhan.framework.spotify.api.applicationApi;
 import com.itkhan.framework.spotify.api.RestResource;
 import com.itkhan.framework.spotify.pojo.Playlist;
 import com.itkhan.framework.spotify.utils.ConfigLoader;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 import static com.itkhan.framework.spotify.api.Route.PLAYLISTS;
@@ -15,6 +16,7 @@ public class PlaylistApi {
      * @param requestPlaylist POJO for the playlist object
      * @return Response object from the REST Assured
      */
+    @Step
     public static Response post(Playlist requestPlaylist) {
         String user_id = ConfigLoader.getInstance().getUser();
         String path = USERS + "/" + user_id + PLAYLISTS;
@@ -28,6 +30,7 @@ public class PlaylistApi {
      * @param accessToken dummy access token
      * @return Response object from the REST Assured
      */
+    @Step
     public static Response post(Playlist requestPlaylist, String accessToken) {
         String user_id = ConfigLoader.getInstance().getUser();
         String path = USERS + "/" + user_id + PLAYLISTS;
@@ -39,6 +42,7 @@ public class PlaylistApi {
      * @param playlist_id ID of the playlist (can be obtained in response of createPlaylist or getAllPlaylists APIs)
      * @return Response object from the REST Assured
      */
+    @Step
     public static Response get(String playlist_id) {
         String path = PLAYLISTS + "/" + playlist_id;
         return RestResource.get(path);
@@ -50,6 +54,7 @@ public class PlaylistApi {
      * @param requestPlaylist POJO for the playlist object
      * @return Response object from the REST Assured
      */
+    @Step
     public static Response update(String playlist_id, Playlist requestPlaylist) {
         String path = PLAYLISTS + "/" + playlist_id;
         return  RestResource.update(path, requestPlaylist);

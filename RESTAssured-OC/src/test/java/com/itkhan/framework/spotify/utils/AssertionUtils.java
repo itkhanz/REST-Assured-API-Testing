@@ -2,6 +2,7 @@ package com.itkhan.framework.spotify.utils;
 
 import com.itkhan.framework.spotify.pojo.Error;
 import com.itkhan.framework.spotify.pojo.Playlist;
+import io.qameta.allure.Step;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +14,7 @@ public class AssertionUtils {
      * @param responsePlaylist Playlist POJO for request Payload
      * @param requestPlaylist Playlist POJO for response body
      */
+    @Step
     public static void assertPlaylistEqual(Playlist responsePlaylist, Playlist requestPlaylist) {
         assertThat(responsePlaylist.getName(), equalTo(requestPlaylist.getName()));
         assertThat(responsePlaylist.getDescription(), equalTo(requestPlaylist.getDescription()));
@@ -25,6 +27,7 @@ public class AssertionUtils {
      * @param expectedStatusCode expected error status code
      * @param expectedMsg expected error message
      */
+    @Step
     public static void assertError(Error responseErr, int expectedStatusCode, String expectedMsg){
         assertThat(responseErr.getError().getStatus(), equalTo(expectedStatusCode));
         assertThat(responseErr.getError().getMessage(), equalTo(expectedMsg));
@@ -35,6 +38,7 @@ public class AssertionUtils {
      * @param actualStatusCode
      * @param expectedStatusCode
      */
+    @Step
     public static void assertStatusCode(int actualStatusCode, int expectedStatusCode) {
         assertThat(actualStatusCode, equalTo(expectedStatusCode));
     }
