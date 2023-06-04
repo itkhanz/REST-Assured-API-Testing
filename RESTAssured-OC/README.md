@@ -18,6 +18,7 @@
 ## Table of Contents
 - [REST Assured API Automation from scratch + Framework + CI](#rest-assured-api-automation-from-scratch---framework---ci)
   * [Learning Outcomes](#learning-outcomes)
+  * [Table of Contents](#table-of-contents)
   * [Demo Websites](#demo-websites)
   * [Postman Essentials](#postman-essentials)
   * [JSON Essentials](#json-essentials)
@@ -103,6 +104,13 @@
       - [Enable for Multiple Environments](#enable-for-multiple-environments)
     + [Framework - Integration with GitHub](#framework---integration-with-github)
     + [Framework - CI](#framework---ci)
+    + [Framework - Jenkins Email Report](#framework---jenkins-email-report)
+      - [Jenkins Configuration](#jenkins-configuration)
+      - [Build Configuration](#build-configuration)
+    + [Framework - Sending Emails with Java](#framework---sending-emails-with-java)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -2816,3 +2824,156 @@ String accountsBaseUri = System.getProperty("ACCOUNTS_BASE_URI") != null ? Syste
 <img src="doc/jenkins-allure.png">
 
 <img src="doc/jenkins-allure-defect.png">
+
+
+### Framework - Jenkins Email Report
+
+* [Send Email Notification From Jenkins](https://www.baeldung.com/ops/jenkins-send-email-notifications)
+* [Email Extension Plugin](https://plugins.jenkins.io/email-ext/)
+* [Jenkins Email-ext variables](https://stackoverflow.com/questions/38098599/jenkins-email-ext-variables)
+* [Jenkins Email-ext plugin - tokens](https://stackoverflow.com/questions/10832486/jenkins-email-ext-plugin-tokens)
+* [Configure Email Notification In Jenkins | How To Send Email From Jenkins Job]()
+* [How To Fix Jenkins Email Issue With Gmail | Less Secure App Access Gmail](https://www.youtube.com/watch?v=TqiBFlU3ACU)
+* [Jenkins email notification | plugin & send attachments in email](https://www.youtube.com/watch?v=ihQ3Lh-re88)
+* [Selenium WebDriver | Part75 |Extent Report in Jenkins |Send email with Attachment | Periodic Job Run](https://www.youtube.com/watch?v=GAjxnkH6Tt4&t=562s)
+
+#### Jenkins Configuration
+
+* Email settings has to be configured just once for all the builds in jenkins and does not require modification for each
+  build.
+* Go to your Email, Settings, Security amd enable 2-Step Verification. 
+* Instead of normal email password, we will use `App password` for Jenkins. Select `Mail` as App and
+  select `Windows Computer` as Device.
+* Navigate to **Manage Jenkins** -> **Configure System**
+* Under **Jenkins Location**, enter your email address and Name in field `System Admin e-mail address` as e.g. Jenkins Admin <abc@gmail.com>
+* Scroll down to `Extended E-mail notification` option.
+  * In `SMTP Server`, add `smtp.gmail.com`
+  * In `SMTP Port`, add 465
+  * Open advanced section, and add your email address and app password in Credentials.
+    * Select `Use SSL` for above credentials.
+  * Choose `@gmail.com` for `Default user e-mail suffix`
+  * Add the recipient email address in `Default Recipients`
+  * In`Default Subject`, add this `Automation Report $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!`. It will
+    use the **Jenkins Variables** to fill the variables for project name, build number, and build status.
+  * [Jenkins Set Environment Variables](https://wiki.jenkins.io/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-belowJenkinsSetEnvironmentVariables)
+  * [Jenkins Predefined environment variables](https://stackoverflow.com/questions/52386190/jenkins-predefined-environment-variables)
+  * [List of available Jenkins Environment variables](https://devopsqa.wordpress.com/2019/11/19/list-of-available-jenkins-environment-variables/)
+  * 
+  * You can also add the EMAIL Body in `Default Content` :
+  ```text
+  Hi,
+  Please find Automation job summary:
+  
+  $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+  
+  Check console output at $BUILD_URL to view the results.
+  
+  Thanks
+  Admin Test Automation
+  
+  Note:- Please do not reply to this email.
+  ```
+* Scroll down to `Email notification` section.
+  * In `SMTP Server`, add `smtp.gmail.com`
+  * Choose `@gmail.com` for `Default user e-mail suffix`
+  * Open advanced section, and add the sender Email address in username field, and password for `Use SMTP Authentication`
+  * Also check the option `Use SSL`
+  * In `SMTP Port`, add `465`
+  * In `Charset`, add `UTF-8`
+
+#### Build Configuration
+
+* Come back to the project, and open the build configuration.
+* In `Post-build Actions`, add `Editable Email Notification`
+  * Add the recipient email address in field `Project Recipient List`
+  * Add the **$DEFAULT_REPLYTO** in field `Project Reply-To List`
+  * Choose `HTML (text/html)` as `Content Type`
+  * Add the **$DEFAULT_SUBJECT** in field `Default Subject`
+  * On job configurations page:
+    * Check 'Editable Email Notification' box -> find `Content Token Reference` (it's between `Attachments` and `Trigger`
+      for matrix projects') -> Click on `?` to the right side of it.
+    * Some of the used tokens in below HTML are described here:
+    
+    <img src="doc/Content-Token-Reference-1.png">
+  
+    <img src="doc/Content-Token-Reference-2.png">
+  
+* Add the following HTML in `Default Content` for the Email Body. The email template was taken as inspiration from [Rajat Verma](https://github.com/rajatt95)
+  ```html
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title></title>
+  </head>
+  <body>
+      <h4 style="font-size: 20px" class="value" align="left"> Browser: <b>${browserName}</b></h4>
+      <h4 style="font-size: 20px" class="value" align="left">Test_Category: <b>${Profile}</b></h4>
+      <table class="container" align="center" style="padding-top: 20px;">
+          <tr class="center">
+              <td colspan="4">
+                  <h2>Automation Test Reports</h2>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <table style="background: #67c2ef;width: 120px;">
+                      <tr><td style="font-size: 36px" class="value" align="center">${TEST_COUNTS, var="total"}</td></tr>
+                      <tr><td style="center">Total</td></tr>
+                  </table>
+              </td>
+              <td>
+                  <table style="background: #79c447;width: 120px;">
+                      <tr><td style="font-size: 36px" class="value" align="center">${TEST_COUNTS, var="pass"}</td></tr>
+                      <tr><td style="center">Passed</td></tr>
+                  </table>
+              </td>
+              <td>
+                  <table style="background: #ff5454;width: 120px;">
+                      <tr><td style="font-size: 36px" class="value" align="center">${TEST_COUNTS, var="fail"}</td></tr>
+                      <tr><td style="center">Failed</td></tr>
+                  </table>
+              </td>
+              <td>
+                  <table style="background: #fabb3d;width: 120px;">
+                      <tr><td style="font-size: 36px" class="value" align="center">${TEST_COUNTS, var="skip"}</td></tr>
+                      <tr><td style="center">Skipped</td></tr>
+                  </table>
+              </td>
+          </tr>
+      </table>
+  </body>
+  </html>
+  ```
+  * Open `Advanced Settings`, add `$DEFAULT_PRESEND_SCRIPT` in **Pre-send Script**, and `$DEFAULT_POSTSEND_SCRIPT` in **Post-send Script**
+  * Under `Triggers`, open `Advanced`
+    * Add recipient email address in corresponding field
+    * Add `$PROJECT_DEFAULT_REPLYTO` in Reply-To List
+    * Choose `Project Content Type` in Content Type dropdown
+    * Add `$PROJECT_DEFAULT_SUBJECT` in Subject
+    * Add `$PROJECT_DEFAULT_CONTENT` in Content
+    * In attachments, give the location of the file to be attached e.g. `SeleniumFramework-RSA\test-output\reports\index.html`
+    * Choose `Attach Build Log` in Attach Build log
+* As soon as the build is finished, the recipient will receive the email:
+  _(The screenshot is only for demonstration, and does not represent the results from this project)_
+
+<img src="doc/jenkins-email.png">
+
+### Framework - Sending Emails with Java
+
+* [Sending Emails with Java](https://www.baeldung.com/java-email)
+* Example Implementation:
+  * [Master Selenium Framework - Rajat Verma](https://github.com/rajatt95/MasterSeleniumFramework/tree/master)
+    * Zip the ExtentReports directory into Project path (you can send this Zip file as well as an Attachment in Email)
+    * Automatically open the report after tests execution.
+    * [Java_Mail_API](https://github.com/rajatt95/MasterSeleniumFramework/tree/master/src/main/java/org/selenium/java_Mail_API)
+    * [Listener](https://github.com/rajatt95/MasterSeleniumFramework/blob/master/src/main/java/org/selenium/listeners/ListenerClass.java)
+    * [EmailSendUtils](https://github.com/rajatt95/MasterSeleniumFramework/blob/master/src/main/java/org/selenium/utils/EmailSendUtils.java)
+    * [ZipUtils](https://github.com/rajatt95/MasterSeleniumFramework/blob/master/src/main/java/org/selenium/utils/ZipUtils.java)
+  * [Master RestAssured Framework - Rajat Verma](https://github.com/rajatt95/MasterRestAssuredFramework)
+   
+
+
+
+
